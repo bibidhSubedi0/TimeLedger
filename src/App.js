@@ -9,6 +9,7 @@ import { ActiveTimer } from './components/ActiveTimer';
 import { TaskInput } from './components/TaskInput';
 import { StatsGrid } from './components/StatsGrid';
 import { TaskList } from './components/TaskList';
+import './App.css';
 
 function App() {
   const [tasks, setTasks] = useState([]);
