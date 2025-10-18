@@ -3,20 +3,20 @@ import { formatTime } from '../utils/timeUtils';
 import { Target, Plus, Trash2, Award, TrendingUp } from 'lucide-react';
 
 const CATEGORIES = [
-  { id: 'study', name: 'Study', color: '#6366f1', icon: '📚' },
-  { id: 'work', name: 'Work', color: '#8b5cf6', icon: '💼' },
-  { id: 'gaming', name: 'Gaming', color: '#ec4899', icon: '🎮' },
-  { id: 'exercise', name: 'Exercise', color: '#10b981', icon: '💪' },
-  { id: 'reading', name: 'Reading', color: '#f59e0b', icon: '📖' },
-  { id: 'coding', name: 'Coding', color: '#3b82f6', icon: '💻' },
-  { id: 'creative', name: 'Creative', color: '#f97316', icon: '🎨' },
-  { id: 'other', name: 'Other', color: '#6b7280', icon: '📌' },
+  { id: 'study', name: 'Study', color: '#1565c0', icon: '📚' },
+  { id: 'work', name: 'Work', color: '#4a148c', icon: '💼' },
+  { id: 'gaming', name: 'Gaming', color: '#c2185b', icon: '🎮' },
+  { id: 'exercise', name: 'Exercise', color: '#2e7d32', icon: '💪' },
+  { id: 'reading', name: 'Reading', color: '#f57c00', icon: '📖' },
+  { id: 'coding', name: 'Coding', color: '#0277bd', icon: '💻' },
+  { id: 'creative', name: 'Creative', color: '#d84315', icon: '🎨' },
+  { id: 'other', name: 'Other', color: '#616161', icon: '📌' },
 ];
 
 export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal }) => {
   const [showForm, setShowForm] = useState(false);
   const [goalName, setGoalName] = useState('');
-  const [goalType, setGoalType] = useState('daily'); // 'daily', 'weekly', 'monthly'
+  const [goalType, setGoalType] = useState('daily');
   const [targetHours, setTargetHours] = useState(4);
   const [category, setCategory] = useState('all');
 
@@ -73,7 +73,7 @@ export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal }) =
   };
 
   const getCategoryInfo = (categoryId) => {
-    if (categoryId === 'all') return { name: 'All Categories', color: '#6b7280', icon: '🎯' };
+    if (categoryId === 'all') return { name: 'All Categories', color: '#616161', icon: '🎯' };
     return CATEGORIES.find(c => c.id === categoryId) || CATEGORIES[CATEGORIES.length - 1];
   };
 
@@ -83,15 +83,15 @@ export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal }) =
   return (
     <div className="space-y-4">
       {/* Add Goal Button */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="bg-white rounded shadow-lg p-6 border border-gray-200">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-            <Target className="w-5 h-5 text-indigo-600" />
+          <h2 className="text-lg font-medium text-gray-800 flex items-center gap-2">
+            <Target className="w-5 h-5 text-gray-700" />
             Your Goals
           </h2>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-semibold"
+            className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 font-medium"
           >
             <Plus className="w-4 h-4" />
             {showForm ? 'Cancel' : 'New Goal'}
@@ -99,25 +99,25 @@ export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal }) =
         </div>
 
         {showForm && (
-          <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+          <div className="space-y-4 p-4 bg-gray-50 rounded border border-gray-200">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Goal Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Goal Name</label>
               <input
                 type="text"
                 value={goalName}
                 onChange={(e) => setGoalName(e.target.value)}
                 placeholder="e.g., Study for 4 hours daily"
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none"
+                className="w-full px-4 py-2 border border-gray-300 rounded focus:border-gray-800 focus:outline-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Time Period</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Time Period</label>
                 <select
                   value={goalType}
                   onChange={(e) => setGoalType(e.target.value)}
-                  className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:border-gray-800 focus:outline-none"
                 >
                   <option value="daily">Daily</option>
                   <option value="weekly">Weekly</option>
@@ -126,27 +126,27 @@ export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal }) =
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Target Hours</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Target Hours</label>
                 <input
                   type="number"
                   value={targetHours}
                   onChange={(e) => setTargetHours(Math.max(0.5, parseFloat(e.target.value) || 0))}
                   min="0.5"
                   step="0.5"
-                  className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:border-gray-800 focus:outline-none"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Category</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
               <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={() => setCategory('all')}
-                  className={`p-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`p-2 rounded text-sm font-medium transition-all ${
                     category === 'all'
-                      ? 'bg-gray-600 text-white'
-                      : 'bg-white hover:bg-gray-100 text-gray-700'
+                      ? 'bg-white border-2 border-gray-800'
+                      : 'bg-white border border-gray-300 hover:border-gray-400'
                   }`}
                 >
                   🎯 All
@@ -155,16 +155,11 @@ export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal }) =
                   <button
                     key={cat.id}
                     onClick={() => setCategory(cat.id)}
-                    className={`p-2 rounded-lg text-sm font-medium transition-all ${
+                    className={`p-2 rounded text-sm font-medium transition-all ${
                       category === cat.id
-                        ? 'ring-2 ring-offset-2'
-                        : 'bg-white hover:bg-gray-100'
+                        ? 'bg-white border-2 border-gray-800'
+                        : 'bg-white border border-gray-300 hover:border-gray-400'
                     }`}
-                    style={{
-                      backgroundColor: category === cat.id ? cat.color + '20' : undefined,
-                      color: category === cat.id ? cat.color : undefined,
-                      ringColor: category === cat.id ? cat.color : undefined,
-                    }}
                   >
                     {cat.icon} {cat.name}
                   </button>
@@ -175,7 +170,7 @@ export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal }) =
             <button
               onClick={handleAddGoal}
               disabled={!goalName.trim() || targetHours <= 0}
-              className="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-semibold disabled:bg-gray-300 disabled:cursor-not-allowed"
+              className="w-full px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
               Create Goal
             </button>
@@ -185,9 +180,9 @@ export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal }) =
 
       {/* Active Goals */}
       {activeGoals.length > 0 && (
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-green-600" />
+        <div className="bg-white rounded shadow-lg p-6 border border-gray-200">
+          <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-gray-700" />
             Active Goals
           </h3>
           <div className="space-y-4">
@@ -199,7 +194,7 @@ export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal }) =
               return (
                 <div
                   key={goal.id}
-                  className={`p-4 rounded-lg border-2 ${
+                  className={`p-4 rounded border-2 ${
                     isCompleted
                       ? 'bg-green-50 border-green-200'
                       : 'bg-gray-50 border-gray-200'
@@ -209,19 +204,20 @@ export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal }) =
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <span
-                          className="px-2 py-1 rounded text-xs font-medium"
+                          className="px-2 py-1 rounded text-xs font-medium border"
                           style={{
-                            backgroundColor: categoryInfo.color + '20',
+                            backgroundColor: 'white',
                             color: categoryInfo.color,
+                            borderColor: categoryInfo.color,
                           }}
                         >
                           {categoryInfo.icon} {categoryInfo.name}
                         </span>
-                        <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs font-medium">
+                        <span className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-xs font-medium border border-gray-300">
                           {goal.type.charAt(0).toUpperCase() + goal.type.slice(1)}
                         </span>
                       </div>
-                      <h4 className="font-bold text-gray-800">{goal.name}</h4>
+                      <h4 className="font-medium text-gray-800">{goal.name}</h4>
                     </div>
                     <button
                       onClick={() => onDeleteGoal(goal.id)}
@@ -237,14 +233,14 @@ export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal }) =
                       <span className="font-medium text-gray-700">
                         {formatTime(currentSeconds)} / {formatTime(goal.targetSeconds)}
                       </span>
-                      <span className="font-bold text-gray-800">{percentage.toFixed(0)}%</span>
+                      <span className="font-medium text-gray-800">{percentage.toFixed(0)}%</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                    <div className="w-full bg-gray-200 rounded h-3 overflow-hidden">
                       <div
-                        className={`h-4 rounded-full transition-all duration-500 ${
+                        className={`h-3 rounded transition-all duration-500 ${
                           isCompleted
-                            ? 'bg-gradient-to-r from-green-500 to-emerald-500'
-                            : 'bg-gradient-to-r from-indigo-500 to-purple-500'
+                            ? 'bg-green-600'
+                            : 'bg-gray-800'
                         }`}
                         style={{ width: `${percentage}%` }}
                       />
@@ -252,9 +248,9 @@ export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal }) =
                   </div>
 
                   {isCompleted ? (
-                    <div className="flex items-center gap-2 text-green-700 font-semibold">
+                    <div className="flex items-center gap-2 text-green-700 font-medium">
                       <Award className="w-5 h-5" />
-                      Goal Completed! 🎉
+                      Goal Completed!
                     </div>
                   ) : (
                     <div className="text-sm text-gray-600">
@@ -270,9 +266,9 @@ export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal }) =
 
       {/* Completed Goals */}
       {completedGoals.length > 0 && (
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <Award className="w-5 h-5 text-yellow-600" />
+        <div className="bg-white rounded shadow-lg p-6 border border-gray-200">
+          <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center gap-2">
+            <Award className="w-5 h-5 text-gray-700" />
             Completed Goals
           </h3>
           <div className="space-y-2">
@@ -282,21 +278,22 @@ export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal }) =
               return (
                 <div
                   key={goal.id}
-                  className="p-3 bg-gray-50 rounded-lg flex justify-between items-center"
+                  className="p-3 bg-gray-50 rounded border border-gray-200 flex justify-between items-center"
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span
-                        className="px-2 py-1 rounded text-xs font-medium"
+                        className="px-2 py-1 rounded text-xs font-medium border"
                         style={{
-                          backgroundColor: categoryInfo.color + '20',
+                          backgroundColor: 'white',
                           color: categoryInfo.color,
+                          borderColor: categoryInfo.color,
                         }}
                       >
                         {categoryInfo.icon} {categoryInfo.name}
                       </span>
                     </div>
-                    <div className="font-semibold text-gray-800">{goal.name}</div>
+                    <div className="font-medium text-gray-800">{goal.name}</div>
                     <div className="text-xs text-gray-500">
                       Completed on {new Date(goal.completedAt).toLocaleDateString()}
                     </div>
@@ -316,13 +313,13 @@ export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal }) =
       )}
 
       {activeGoals.length === 0 && completedGoals.length === 0 && (
-        <div className="bg-white rounded-lg shadow-lg p-12 text-center">
+        <div className="bg-white rounded shadow-lg p-12 text-center border border-gray-200">
           <Target className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-gray-800 mb-2">No Goals Yet</h3>
-          <p className="text-gray-600 mb-4">Set your first goal to track your progress!</p>
+          <h3 className="text-xl font-medium text-gray-800 mb-2">No Goals Yet</h3>
+          <p className="text-gray-600 mb-4">Set your first goal to track your progress</p>
           <button
             onClick={() => setShowForm(true)}
-            className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-semibold"
+            className="px-6 py-3 bg-gray-800 text-white rounded hover:bg-gray-700 font-medium"
           >
             Create Your First Goal
           </button>

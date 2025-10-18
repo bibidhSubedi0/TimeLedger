@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { formatTime } from '../utils/timeUtils';
-import { Trash2, Edit2, Download, Filter, X } from 'lucide-react';
+import { Trash2, Edit2, Download, Filter } from 'lucide-react';
 
 const CATEGORIES = [
-  { id: 'study', name: 'Study', color: '#6366f1', icon: '📚' },
-  { id: 'work', name: 'Work', color: '#8b5cf6', icon: '💼' },
-  { id: 'gaming', name: 'Gaming', color: '#ec4899', icon: '🎮' },
-  { id: 'exercise', name: 'Exercise', color: '#10b981', icon: '💪' },
-  { id: 'reading', name: 'Reading', color: '#f59e0b', icon: '📖' },
-  { id: 'coding', name: 'Coding', color: '#3b82f6', icon: '💻' },
-  { id: 'creative', name: 'Creative', color: '#f97316', icon: '🎨' },
-  { id: 'other', name: 'Other', color: '#6b7280', icon: '📌' },
+  { id: 'study', name: 'Study', color: '#1565c0', icon: '📚' },
+  { id: 'work', name: 'Work', color: '#4a148c', icon: '💼' },
+  { id: 'gaming', name: 'Gaming', color: '#c2185b', icon: '🎮' },
+  { id: 'exercise', name: 'Exercise', color: '#2e7d32', icon: '💪' },
+  { id: 'reading', name: 'Reading', color: '#f57c00', icon: '📖' },
+  { id: 'coding', name: 'Coding', color: '#0277bd', icon: '💻' },
+  { id: 'creative', name: 'Creative', color: '#d84315', icon: '🎨' },
+  { id: 'other', name: 'Other', color: '#616161', icon: '📌' },
 ];
 
 export const TaskList = ({ tasks, onDelete, onUpdate }) => {
@@ -68,13 +68,13 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className="bg-white rounded shadow-lg p-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-bold text-gray-800">Recent Tasks</h2>
+        <h2 className="text-lg font-medium text-gray-800">Recent Tasks</h2>
         <div className="flex gap-2">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium"
+            className="flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded border border-gray-300 hover:bg-gray-200 text-sm font-medium"
           >
             <Filter className="w-4 h-4" />
             Filter
@@ -82,25 +82,25 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
           {tasks.length > 0 && (
             <button
               onClick={exportToCSV}
-              className="flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium"
+              className="flex items-center gap-2 px-3 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 text-sm font-medium"
             >
               <Download className="w-4 h-4" />
-              Export CSV
+              Export
             </button>
           )}
         </div>
       </div>
 
       {showFilters && (
-        <div className="mb-4 p-4 bg-gray-50 rounded-lg">
-          <div className="text-sm font-semibold text-gray-700 mb-2">Filter by Category</div>
+        <div className="mb-4 p-4 bg-gray-50 rounded border border-gray-200">
+          <div className="text-sm font-medium text-gray-700 mb-2">Filter by Category</div>
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setFilterCategory('all')}
-              className={`px-3 py-1 rounded-lg text-sm font-medium ${
+              className={`px-3 py-1 rounded text-sm font-medium ${
                 filterCategory === 'all'
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
+                  ? 'bg-gray-800 text-white'
+                  : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
               }`}
             >
               All ({tasks.length})
@@ -112,16 +112,11 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
                 <button
                   key={cat.id}
                   onClick={() => setFilterCategory(cat.id)}
-                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-3 py-1 rounded text-sm font-medium transition-all ${
                     filterCategory === cat.id
-                      ? 'ring-2 ring-offset-2'
-                      : 'bg-white hover:bg-gray-100'
+                      ? 'bg-white border-2 border-gray-800'
+                      : 'bg-white border border-gray-300 hover:border-gray-400'
                   }`}
-                  style={{
-                    backgroundColor: filterCategory === cat.id ? cat.color + '20' : undefined,
-                    color: filterCategory === cat.id ? cat.color : undefined,
-                    ringColor: filterCategory === cat.id ? cat.color : undefined,
-                  }}
                 >
                   {cat.icon} {cat.name} ({count})
                 </button>
@@ -144,29 +139,29 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
             
             if (editingId === task.id) {
               return (
-                <div key={task.id} className="p-4 bg-indigo-50 rounded-lg border-2 border-indigo-200">
+                <div key={task.id} className="p-4 bg-gray-50 rounded border border-gray-300">
                   <input
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="w-full px-3 py-2 mb-2 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none"
+                    className="w-full px-3 py-2 mb-2 border border-gray-300 rounded focus:border-gray-800 focus:outline-none"
                   />
                   <textarea
                     value={editNotes}
                     onChange={(e) => setEditNotes(e.target.value)}
                     placeholder="Notes..."
                     rows="2"
-                    className="w-full px-3 py-2 mb-3 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none resize-none"
+                    className="w-full px-3 py-2 mb-3 border border-gray-300 rounded focus:border-gray-800 focus:outline-none resize-none"
                   />
                   <div className="flex gap-2">
                     <button
                       onClick={saveEdit}
-                      className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium"
+                      className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 text-sm font-medium"
                     >
                       Save
                     </button>
                     <button
                       onClick={cancelEdit}
-                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm font-medium"
+                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 text-sm font-medium"
                     >
                       Cancel
                     </button>
@@ -176,20 +171,21 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
             }
 
             return (
-              <div key={task.id} className="flex justify-between items-start p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              <div key={task.id} className="flex justify-between items-start p-3 bg-gray-50 rounded border border-gray-200 hover:bg-gray-100 transition-colors">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span
-                      className="px-2 py-1 rounded text-xs font-medium"
+                      className="px-2 py-1 rounded text-xs font-medium border"
                       style={{
-                        backgroundColor: categoryInfo.color + '20',
+                        backgroundColor: 'white',
                         color: categoryInfo.color,
+                        borderColor: categoryInfo.color,
                       }}
                     >
                       {categoryInfo.icon} {categoryInfo.name}
                     </span>
                   </div>
-                  <div className="font-semibold text-gray-800">{task.name}</div>
+                  <div className="font-medium text-gray-800">{task.name}</div>
                   {task.notes && (
                     <div className="text-sm text-gray-600 mt-1 italic">"{task.notes}"</div>
                   )}
@@ -199,7 +195,7 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
                 </div>
                 <div className="flex items-center gap-3 ml-4">
                   <div className="text-right">
-                    <div className="font-mono font-bold text-indigo-600">
+                    <div className="font-mono font-medium text-gray-800">
                       {formatTime(task.duration)}
                     </div>
                     {!task.synced && (
@@ -209,7 +205,7 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
                   <div className="flex gap-1">
                     <button
                       onClick={() => startEdit(task)}
-                      className="p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                      className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 rounded transition-colors"
                       title="Edit task"
                     >
                       <Edit2 className="w-4 h-4" />

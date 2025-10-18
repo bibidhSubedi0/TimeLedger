@@ -27,7 +27,6 @@ function App() {
   const { elapsedTime, resetTimer } = useTimer(activeTask);
   const { syncData, syncGoals, isSyncing } = useTaskSync(isOnline, deviceId, user);
 
-  // Load tasks and goals from localStorage on mount
   useEffect(() => {
     if (!user) return;
 
@@ -43,7 +42,6 @@ function App() {
       setGoals(JSON.parse(savedGoals));
     }
 
-    // Initial sync if online
     if (isOnline && supabase) {
       syncData().then(syncedTasks => {
         if (syncedTasks) {
@@ -56,10 +54,8 @@ function App() {
         }
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  // Save tasks to localStorage whenever they change
   useEffect(() => {
     if (user) {
       const userKey = `timeTasks_${user.id}`;
@@ -67,7 +63,6 @@ function App() {
     }
   }, [tasks, user]);
 
-  // Save goals to localStorage whenever they change
   useEffect(() => {
     if (user) {
       const goalsKey = `timeGoals_${user.id}`;
@@ -75,7 +70,6 @@ function App() {
     }
   }, [goals, user]);
 
-  // Monitor online status and sync when coming online
   useEffect(() => {
     if (isOnline && supabase && user) {
       syncData().then(syncedTasks => {
@@ -89,7 +83,6 @@ function App() {
         }
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOnline, user]);
 
   const startTask = (taskName, category, notes) => {
@@ -121,7 +114,6 @@ function App() {
     setActiveTask(null);
     resetTimer();
 
-    // Trigger sync if online
     if (isOnline && supabase && user) {
       setTimeout(() => {
         syncData().then(syncedTasks => {
@@ -146,7 +138,6 @@ function App() {
   const addGoal = (goal) => {
     setGoals(prev => [...prev, { ...goal, id: Date.now(), synced: false }]);
     
-    // Trigger sync if online
     if (isOnline && supabase && user) {
       setTimeout(() => {
         syncGoals().then(syncedGoals => {
@@ -165,7 +156,6 @@ function App() {
   const updateGoal = (goalId, updates) => {
     setGoals(prev => prev.map(g => g.id === goalId ? { ...g, ...updates, synced: false } : g));
     
-    // Trigger sync if online
     if (isOnline && supabase && user) {
       setTimeout(() => {
         syncGoals().then(syncedGoals => {
@@ -177,19 +167,17 @@ function App() {
     }
   };
 
-  // Show loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded h-12 w-12 border-b-2 border-gray-800 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
         </div>
       </div>
     );
   }
 
-  // Show auth screen if not logged in
   if (!user) {
     return <Auth onSignIn={signInWithGoogle} />;
   }
@@ -197,7 +185,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-4">
+        <div className="bg-white rounded shadow-lg p-6 mb-4 border border-gray-200">
           <Header 
             isOnline={isOnline} 
             isSyncing={isSyncing} 

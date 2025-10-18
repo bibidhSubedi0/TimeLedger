@@ -55,36 +55,36 @@ export const StatsGrid = ({ tasks, goals }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-      <div className="bg-white rounded-lg shadow-lg p-4">
+      <div className="bg-white rounded shadow-lg p-4 border border-gray-200">
         <div className="flex items-center gap-2 mb-2">
-          <Calendar className="w-5 h-5 text-indigo-600" />
+          <Calendar className="w-5 h-5 text-gray-700" />
           <div className="text-sm text-gray-600">Today</div>
         </div>
-        <div className="text-2xl font-bold text-gray-800">{formatTime(getTodayTime())}</div>
+        <div className="text-2xl font-medium text-gray-800">{formatTime(getTodayTime())}</div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-lg p-4">
+      <div className="bg-white rounded shadow-lg p-4 border border-gray-200">
         <div className="flex items-center gap-2 mb-2">
-          <TrendingUp className="w-5 h-5 text-green-600" />
+          <TrendingUp className="w-5 h-5 text-gray-700" />
           <div className="text-sm text-gray-600">This Week</div>
         </div>
-        <div className="text-2xl font-bold text-gray-800">{formatTime(getWeekTime())}</div>
+        <div className="text-2xl font-medium text-gray-800">{formatTime(getWeekTime())}</div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-lg p-4">
+      <div className="bg-white rounded shadow-lg p-4 border border-gray-200">
         <div className="flex items-center gap-2 mb-2">
-          <Award className="w-5 h-5 text-yellow-600" />
+          <Award className="w-5 h-5 text-gray-700" />
           <div className="text-sm text-gray-600">Streak</div>
         </div>
-        <div className="text-2xl font-bold text-gray-800">{getStreak()} days 🔥</div>
+        <div className="text-2xl font-medium text-gray-800">{getStreak()} days</div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-lg p-4">
+      <div className="bg-white rounded shadow-lg p-4 border border-gray-200">
         <div className="flex items-center gap-2 mb-2">
-          <Target className="w-5 h-5 text-purple-600" />
+          <Target className="w-5 h-5 text-gray-700" />
           <div className="text-sm text-gray-600">Active Goals</div>
         </div>
-        <div className="text-2xl font-bold text-gray-800">{activeGoals.length}</div>
+        <div className="text-2xl font-medium text-gray-800">{activeGoals.length}</div>
       </div>
     </div>
   );
