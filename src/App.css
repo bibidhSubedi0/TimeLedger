@@ -272,16 +272,23 @@ code {
   }
   
   .timer-task-name {
+    font-size: 1.5rem;
     margin-bottom: 0.75rem;
   }
   
   .timer-category-badge {
-    margin-bottom: 2rem;
+    font-size: 0.875rem;
     padding: 0.4rem 1rem;
+    margin-bottom: 2rem;
   }
   
   .timer-main {
+    font-size: 4rem;
     margin: 1.5rem 0;
+  }
+  
+  .timer-subseconds {
+    font-size: 2rem;
   }
   
   .timer-actions {
@@ -306,6 +313,18 @@ code {
 }
 
 @media (max-width: 480px) {
+  .timer-task-name {
+    font-size: 1.25rem;
+  }
+
+  .timer-main {
+    font-size: 3rem;
+  }
+  
+  .timer-subseconds {
+    font-size: 1.5rem;
+  }
+
   .timer-actions {
     flex-direction: column;
     width: 100%;
@@ -953,7 +972,7 @@ button:active:not(:disabled) {
 
 .bg-indigo-600 {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  color: white !important;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
@@ -1124,10 +1143,49 @@ button:active:not(:disabled) {
   padding-right: 1.25rem;
 }
 
-@media (max-width: 767px) {
-  .px-4 {
-    padding-left: 1rem;
-    padding-right: 1rem;
+@media (max-width: 768px) {
+  .text-2xl {
+    font-size: 1.125rem !important;
+  }
+  
+  .p-4 {
+    padding: 1rem;
+  }
+  
+  .p-6 {
+    padding: 1.5rem;
+  }
+  
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+  
+  .gap-2 {
+    gap: 0.5rem;
+  }
+  
+  /* Fix header user info on mobile */
+  .bg-gradient-to-br.from-gray-50 {
+    padding: 0.375rem 0.5rem !important;
+  }
+  
+  .bg-gradient-to-br.from-gray-50 span {
+    display: none !important;
+  }
+  
+  .bg-gradient-to-br.from-gray-50 img,
+  .bg-gradient-to-br.from-gray-50 > div:first-child {
+    width: 1.75rem !important;
+    height: 1.75rem !important;
+  }
+  
+  @media (max-width: 480px) {
+    .flex.gap-2 button {
+      flex: 1;
+      min-width: 0;
+      font-size: 0.875rem;
+      padding: 0.625rem 0.875rem;
+    }
   }
 }
 
@@ -1216,13 +1274,31 @@ button:active:not(:disabled) {
 /* Mobile-specific fixes */
 @media (max-width: 768px) {
   .text-2xl {
-    font-size: 1.25rem !important;
+    font-size: 1.125rem !important;
+  }
+  
+  .p-4 {
+    padding: 1rem;
+  }
+  
+  .p-6 {
+    padding: 1.5rem;
+  }
+  
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+  
+  .gap-2 {
+    gap: 0.5rem;
   }
   
   @media (max-width: 480px) {
     .flex.gap-2 button {
       flex: 1;
       min-width: 0;
+      font-size: 0.875rem;
+      padding: 0.625rem 0.875rem;
     }
   }
   
@@ -1242,6 +1318,61 @@ button:active:not(:disabled) {
   
   .h-8 {
     height: 2.5rem;
+  }
+
+  /* Header mobile fixes */
+  .text-2xl {
+    font-size: 1.125rem !important;
+    line-height: 1.4;
+  }
+
+  /* Make grid cards smaller on mobile */
+  .grid-cols-2, .grid-cols-3, .grid-cols-4 {
+    gap: 0.75rem;
+  }
+
+  /* Stats grid mobile */
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  /* Compact header on mobile */
+  .w-10 {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .w-6 {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+
+  .p-4 {
+    padding: 0.75rem;
+  }
+
+  .p-6 {
+    padding: 1rem;
+  }
+
+  .rounded-lg {
+    border-radius: 12px;
+  }
+
+  /* Even more compact for very small screens */
+  .text-2xl {
+    font-size: 1rem !important;
+  }
+
+  button {
+    font-size: 0.875rem;
+    padding: 0.625rem 1rem;
   }
 }
 
