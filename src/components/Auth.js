@@ -19,31 +19,97 @@ export const Auth = ({ onSignIn }) => {
   };
 
   return (
-    
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo/Brand */}
-        <div className="text-center mb-12">
-          <div className="inline-block mb-6">
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '2rem'
+    }}>
+      <div style={{
+        width: '100%',
+        maxWidth: '420px'
+      }}>
+        {/* Logo */}
+        <div style={{
+          textAlign: 'center',
+          marginBottom: '3rem'
+        }}>
+          <div style={{
+            width: '80px',
+            height: '80px',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            borderRadius: '20px',
+            marginBottom: '1.5rem',
+            boxShadow: '0 20px 40px rgba(102, 126, 234, 0.3)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 1.5rem auto'
+          }}>
             <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="48" height="48" rx="2" fill="#1a1a1a"/>
-              <path d="M24 14V24L30 30" stroke="white" strokeWidth="2" strokeLinecap="square"/>
-              <circle cx="24" cy="24" r="9" stroke="white" strokeWidth="2"/>
+              <circle cx="24" cy="24" r="18" stroke="white" strokeWidth="2.5" opacity="0.3"/>
+              <circle cx="24" cy="24" r="14" stroke="white" strokeWidth="2.5"/>
+              <path d="M24 14 L24 24 L30 28" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <circle cx="24" cy="24" r="2" fill="white"/>
             </svg>
           </div>
-          <h1 className="text-4xl font-light text-gray-900 mb-3 tracking-tight">
+          <h1 style={{
+            fontSize: '2.5rem',
+            fontWeight: '300',
+            color: '#1f2937',
+            marginBottom: '0.5rem',
+            letterSpacing: '-0.02em'
+          }}>
             Time Tracker
           </h1>
-          <p className="text-gray-500 text-lg font-light">
-            Track. Analyze. Improve.
+          <p style={{
+            fontSize: '1.125rem',
+            color: '#6b7280',
+            fontWeight: '300'
+          }}>
+            Track time beautifully
           </p>
         </div>
 
-        {/* Sign In Button */}
-        <div className="space-y-6">
+        {/* Sign in card */}
+        <div style={{
+          background: 'white',
+          borderRadius: '24px',
+          padding: '2.5rem',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.08)',
+          marginBottom: '2rem'
+        }}>
           <button
             onClick={handleClick}
-            className="w-full flex items-center justify-center gap-4 px-6 py-4 bg-white border-2 border-gray-900 text-gray-900 font-medium hover:bg-gray-900 hover:text-white transition-all duration-200"
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '12px',
+              padding: '16px 24px',
+              background: 'white',
+              border: '2px solid #e5e7eb',
+              borderRadius: '16px',
+              fontSize: '1rem',
+              fontWeight: '500',
+              color: '#1f2937',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              outline: 'none'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.borderColor = '#667eea';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 12px 24px rgba(102, 126, 234, 0.15)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.borderColor = '#e5e7eb';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z" fill="#4285F4"/>
@@ -51,46 +117,46 @@ export const Auth = ({ onSignIn }) => {
               <path d="M4.32 11.9c-.2-.58-.31-1.2-.31-1.9 0-.7.11-1.32.31-1.9V5.58H.96A9.996 9.996 0 000 10c0 1.61.39 3.14 1.06 4.42l3.26-2.52z" fill="#FBBC05"/>
               <path d="M10 3.95c1.5 0 2.85.52 3.9 1.53l2.88-2.88C14.96.99 12.7 0 10 0 6.17 0 2.7 2.27.96 5.58l3.36 2.52C5.12 5.72 7.35 3.95 10 3.95z" fill="#EA4335"/>
             </svg>
-            <span>Continue with Google</span>
+            <span>Sign in with Google</span>
           </button>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-400 uppercase tracking-wider text-xs">
-                Features
-              </span>
-            </div>
-          </div>
-
-          {/* Features List */}
-          <div className="space-y-4 pt-2">
-            {[
-              'Cross-device sync',
-              'Goal tracking',
-              'Detailed analytics',
-              'Offline mode'
-            ].map((feature, index) => (
-              <div key={index} className="flex items-center gap-4">
-                <div className="w-6 h-6 border-2 border-gray-900 flex items-center justify-center flex-shrink-0">
-                  <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
-                    <path d="M1 5L4.5 8.5L11 1.5" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="square"/>
-                  </svg>
+          <div style={{
+            marginTop: '2rem',
+            paddingTop: '2rem',
+            borderTop: '1px solid #f3f4f6'
+          }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '12px'
+            }}>
+              {[
+                ['⚡', 'Fast & Simple'],
+                ['🔒', 'Secure'],
+                ['📊', 'Analytics'],
+                ['☁️', 'Cloud Sync']
+              ].map(([icon, text], i) => (
+                <div key={i} style={{
+                  padding: '12px',
+                  background: 'linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%)',
+                  borderRadius: '12px',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '1.5rem', marginBottom: '4px' }}>{icon}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>{text}</div>
                 </div>
-                <span className="text-gray-700 font-light">{feature}</span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="mt-12 text-center">
-          <p className="text-xs text-gray-400 uppercase tracking-wider">
-            Secure & Private
-          </p>
-        </div>
+        <p style={{
+          textAlign: 'center',
+          fontSize: '0.875rem',
+          color: '#9ca3af'
+        }}>
+          Free to use • No credit card required
+        </p>
       </div>
     </div>
   );

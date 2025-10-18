@@ -171,7 +171,7 @@ function App() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded h-12 w-12 border-b-2 border-gray-800 mx-auto mb-4"></div>
+          <div className="animate-spin rounded h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
         </div>
       </div>
@@ -183,56 +183,69 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded shadow-lg p-6 mb-4 border border-gray-200">
-          <Header 
-            isOnline={isOnline} 
-            isSyncing={isSyncing} 
-            view={view} 
-            setView={setView}
-            user={user}
-            onSignOut={signOut}
-          />
-          
-          {view === 'tasks' && (
-            <>
-              <ActiveTimer activeTask={activeTask} elapsedTime={elapsedTime} />
+    <>
+      <ActiveTimer activeTask={activeTask} elapsedTime={elapsedTime} />
+      
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-white rounded-lg shadow-lg p-6 mb-4">
+            <Header 
+              isOnline={isOnline} 
+              isSyncing={isSyncing} 
+              view={view} 
+              setView={setView}
+              user={user}
+              onSignOut={signOut}
+            />
+            
+            {view === 'tasks' && !activeTask && (
               <TaskInput 
                 activeTask={activeTask} 
                 onStart={startTask} 
                 onStop={stopTask} 
               />
+            )}
+            
+            {view === 'tasks' && activeTask && (
+              <div className="text-center py-8">
+                <p className="text-gray-600 mb-4">Timer is running in fullscreen mode</p>
+                <button
+                  onClick={stopTask}
+                  className="px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-all"
+                >
+                  Stop Task
+                </button>
+              </div>
+            )}
+          </div>
+
+          {view === 'tasks' && (
+            <>
+              <StatsGrid tasks={tasks} goals={goals} />
+              <TaskList 
+                tasks={tasks} 
+                onDelete={deleteTask}
+                onUpdate={updateTask}
+              />
             </>
           )}
-        </div>
 
-        {view === 'tasks' && (
-          <>
-            <StatsGrid tasks={tasks} goals={goals} />
-            <TaskList 
-              tasks={tasks} 
-              onDelete={deleteTask}
-              onUpdate={updateTask}
+          {view === 'analytics' && (
+            <Analytics tasks={tasks} />
+          )}
+
+          {view === 'goals' && (
+            <Goals 
+              goals={goals}
+              tasks={tasks}
+              onAddGoal={addGoal}
+              onDeleteGoal={deleteGoal}
+              onUpdateGoal={updateGoal}
             />
-          </>
-        )}
-
-        {view === 'analytics' && (
-          <Analytics tasks={tasks} />
-        )}
-
-        {view === 'goals' && (
-          <Goals 
-            goals={goals}
-            tasks={tasks}
-            onAddGoal={addGoal}
-            onDeleteGoal={deleteGoal}
-            onUpdateGoal={updateGoal}
-          />
-        )}
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
