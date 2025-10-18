@@ -1,8 +1,8 @@
 import React from 'react';
-import { Clock, RefreshCw, BarChart3, Target, List } from 'lucide-react';
+import { Clock, RefreshCw, BarChart3, Target, List, LogOut, User } from 'lucide-react';
 import { supabase } from '../config/supabase';
 
-export const Header = ({ isOnline, isSyncing, view, setView }) => {
+export const Header = ({ isOnline, isSyncing, view, setView, user, onSignOut }) => {
   return (
     <>
       <div className="flex items-center justify-between mb-4">
@@ -13,6 +13,29 @@ export const Header = ({ isOnline, isSyncing, view, setView }) => {
           </h1>
         </div>
         <div className="flex items-center gap-2">
+          {user && (
+            <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full">
+              {user.user_metadata?.avatar_url ? (
+                <img 
+                  src={user.user_metadata.avatar_url} 
+                  alt="Profile" 
+                  className="w-6 h-6 rounded-full"
+                />
+              ) : (
+                <User className="w-4 h-4 text-gray-600" />
+              )}
+              <span className="text-sm text-gray-700 hidden sm:inline">
+                {user.user_metadata?.full_name || user.email}
+              </span>
+              <button
+                onClick={onSignOut}
+                className="p-1 hover:bg-gray-200 rounded transition-colors"
+                title="Sign out"
+              >
+                <LogOut className="w-4 h-4 text-gray-600" />
+              </button>
+            </div>
+          )}
           {isSyncing && <RefreshCw className="w-4 h-4 text-blue-600 animate-spin" style={{ flexShrink: 0 }} />}
           <div 
             className={`px-3 py-1 rounded-full text-sm ${isOnline ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}
