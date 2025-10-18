@@ -4,7 +4,7 @@ import { Play, Square, Tag, FileText, ChevronDown, ChevronUp } from 'lucide-reac
 const CATEGORIES = [
   { id: 'study', name: 'Study', color: '#667eea', icon: '📚' },
   { id: 'work', name: 'Work', color: '#764ba2', icon: '💼' },
-  { id: 'gaming', name: 'Gaming', color: '#ec4899', icon: '🎮'},
+  { id: 'gaming', name: 'Gaming', color: '#ec4899', icon: '🎮' },
   { id: 'exercise', name: 'Exercise', color: '#10b981', icon: '💪' },
   { id: 'reading', name: 'Reading', color: '#f59e0b', icon: '📖' },
   { id: 'coding', name: 'Coding', color: '#3b82f6', icon: '💻' },
@@ -78,41 +78,76 @@ export const TaskInput = ({ activeTask, onStart, onStop }) => {
           </button>
 
           {showAdvanced && (
-            <div className="space-y-4 p-4 bg-gradient-to-br from-gray-50 to-indigo-50 rounded-lg border-2 border-indigo-100">
-              <div>
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
-                  <Tag className="w-4 h-4" />
+            <div style={{ 
+              padding: '20px', 
+              backgroundColor: '#f8fafc', 
+              borderRadius: '12px', 
+              border: '2px solid #e0e7ff',
+            }}>
+              <div style={{ marginBottom: '20px' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  marginBottom: '16px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#374151',
+                }}>
+                  <Tag style={{ width: '16px', height: '16px' }} />
                   Category
-                </label>
-                <div className="grid grid-cols-4 gap-2">
+                </div>
+                
+                <div style={{ 
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: '8px',
+                }}>
                   {CATEGORIES.map(cat => (
                     <button
                       key={cat.id}
                       onClick={() => setCategory(cat.id)}
-                      className={`p-3 rounded-lg text-sm font-medium transition-all ${
-                        category === cat.id
-                          ? 'bg-white shadow-md scale-105'
-                          : 'bg-white/60 hover:bg-white hover:shadow'
-                      }`}
                       style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '4px',
+                        padding: '10px 6px',
+                        borderRadius: '6px',
                         borderWidth: '2px',
-                        borderColor: category === cat.id ? cat.color : 'transparent',
+                        borderStyle: 'solid',
+                        borderColor: category === cat.id ? cat.color : '#e5e7eb',
+                        backgroundColor: category === cat.id ? 'white' : '#f9fafb',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        textAlign: 'center',
                       }}
                     >
-                      <div className="text-2xl mb-1">{cat.icon}</div>
-                      <div style={{ color: category === cat.id ? cat.color : '#4b5563' }}>
+                      <span style={{ fontSize: '24px' }}>{cat.icon}</span>
+                      <span style={{ color: category === cat.id ? cat.color : '#4b5563' }}>
                         {cat.name}
-                      </div>
+                      </span>
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-                  <FileText className="w-4 h-4" />
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  marginBottom: '12px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#374151',
+                }}>
+                  <FileText style={{ width: '16px', height: '16px' }} />
                   Notes (optional)
-                </label>
+                </div>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}

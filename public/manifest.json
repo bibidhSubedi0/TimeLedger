@@ -1,15 +1,23 @@
 {
-  "short_name": "TimeTracker",
-  "name": "Simple Time Tracker",
+  "name": "Time Tracker",
+  "short_name": "TimeTrack",
+  "description": "Track your time beautifully",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#667eea",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "/prp.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/prp.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#4f46e5",
-  "background_color": "#ffffff"
+  ]
 }
