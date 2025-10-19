@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, Square, Tag, FileText, ChevronDown, ChevronUp } from 'lucide-react';
+import { Play, Square, Tag, FileText, ChevronDown, ChevronUp, Zap } from 'lucide-react';
 
 const CATEGORIES = [
   { id: 'study', name: 'Study', color: '#3b82f6', icon: '📚' },
@@ -10,6 +10,13 @@ const CATEGORIES = [
   { id: 'coding', name: 'Coding', color: '#06b6d4', icon: '💻' },
   { id: 'creative', name: 'Creative', color: '#f97316', icon: '🎨' },
   { id: 'other', name: 'Other', color: '#64748b', icon: '📌' },
+];
+
+const QUICK_TEMPLATES = [
+  { name: 'Deep Work', category: 'work', icon: '🎯' },
+  { name: 'Study Session', category: 'study', icon: '📖' },
+  { name: 'Exercise', category: 'exercise', icon: '🏃' },
+  { name: 'Reading', category: 'reading', icon: '📚' },
 ];
 
 export const TaskInput = ({ activeTask, onStart, onStop }) => {
@@ -26,17 +33,38 @@ export const TaskInput = ({ activeTask, onStart, onStop }) => {
     setShowAdvanced(false);
   };
 
+  const handleQuickStart = (template) => {
+    onStart(template.name, template.category, '');
+  };
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !activeTask && !e.shiftKey) {
       handleStart();
     }
   };
 
-  const selectedCategory = CATEGORIES.find(c => c.id === category) || CATEGORIES[0];
-
   return (
     <div className="space-y-4">
-      <div className="flex gap-3">
+      {/* Quick Start Templates */}
+      {!activeTask && (
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          <Zap className="w-4 h-4 text-purple-400 flex-shrink-0" />
+          <span className="text-xs text-slate-400 flex-shrink-0">Quick start:</span>
+          {QUICK_TEMPLATES.map((template) => (
+            <button
+              key={template.name}
+              onClick={() => handleQuickStart(template)}
+              className="px-3 py-1.5 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition-all whitespace-nowrap flex items-center gap-1.5"
+            >
+              <span>{template.icon}</span>
+              <span>{template.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Main Input */}
+      <div className="flex flex-col sm:flex-row gap-3">
         <input
           type="text"
           value={taskName}
@@ -44,24 +72,24 @@ export const TaskInput = ({ activeTask, onStart, onStop }) => {
           onKeyPress={handleKeyPress}
           placeholder="What are you working on?"
           disabled={!!activeTask}
-          className="flex-1 px-5 py-4 border-2 border-slate-200 rounded-2xl focus:border-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-100 disabled:bg-slate-50 disabled:text-slate-500 transition-all text-base placeholder:text-slate-400"
+          className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 disabled:bg-slate-800/30 disabled:text-slate-500 transition-all text-slate-200 placeholder:text-slate-500"
         />
         {!activeTask ? (
           <button
             onClick={handleStart}
             disabled={!taskName.trim()}
-            className="px-6 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl font-medium hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center gap-2 transition-all duration-300"
+            className="w-full sm:w-auto px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-purple-600 flex items-center justify-center gap-2 transition-all"
           >
-            <Play className="w-5 h-5" fill="currentColor" />
-            <span className="hidden sm:inline">Start</span>
+            <Play className="w-4 h-4" fill="currentColor" />
+            <span>Start</span>
           </button>
         ) : (
           <button
             onClick={onStop}
-            className="px-6 py-4 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-2xl font-medium hover:shadow-lg hover:scale-105 flex items-center gap-2 transition-all duration-300"
+            className="w-full sm:w-auto px-6 py-3 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-medium flex items-center justify-center gap-2 transition-all"
           >
-            <Square className="w-5 h-5" fill="currentColor" />
-            <span className="hidden sm:inline">Stop</span>
+            <Square className="w-4 h-4" fill="currentColor" />
+            <span>Stop</span>
           </button>
         )}
       </div>
@@ -70,16 +98,16 @@ export const TaskInput = ({ activeTask, onStart, onStop }) => {
         <>
           <button
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="text-sm text-slate-500 hover:text-blue-600 flex items-center gap-2 transition-colors"
+            className="text-sm text-slate-400 hover:text-purple-400 flex items-center gap-2 transition-colors"
           >
             {showAdvanced ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             {showAdvanced ? 'Hide' : 'Show'} category & notes
           </button>
 
           {showAdvanced && (
-            <div className="p-6 bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl border border-slate-200">
-              <div className="mb-6">
-                <div className="flex items-center gap-2 mb-4 text-sm font-medium text-slate-700">
+            <div className="p-5 bg-slate-800/30 rounded-xl border border-slate-700">
+              <div className="mb-5">
+                <div className="flex items-center gap-2 mb-3 text-sm font-medium text-slate-300">
                   <Tag className="w-4 h-4" />
                   Category
                 </div>
@@ -89,15 +117,15 @@ export const TaskInput = ({ activeTask, onStart, onStop }) => {
                     <button
                       key={cat.id}
                       onClick={() => setCategory(cat.id)}
-                      className={`flex flex-col items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all duration-300 ${
+                      className={`flex flex-col items-center justify-center gap-2 p-3 rounded-lg border transition-all ${
                         category === cat.id
-                          ? 'bg-white border-blue-400 shadow-lg scale-105'
-                          : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-md'
+                          ? 'bg-slate-700 border-purple-500 scale-105'
+                          : 'bg-slate-800/50 border-slate-700 hover:border-slate-600 hover:bg-slate-800'
                       }`}
                     >
                       <span className="text-2xl">{cat.icon}</span>
                       <span className={`text-xs font-medium ${
-                        category === cat.id ? 'text-blue-600' : 'text-slate-600'
+                        category === cat.id ? 'text-purple-400' : 'text-slate-400'
                       }`}>
                         {cat.name}
                       </span>
@@ -107,7 +135,7 @@ export const TaskInput = ({ activeTask, onStart, onStop }) => {
               </div>
 
               <div>
-                <div className="flex items-center gap-2 mb-3 text-sm font-medium text-slate-700">
+                <div className="flex items-center gap-2 mb-3 text-sm font-medium text-slate-300">
                   <FileText className="w-4 h-4" />
                   Notes (optional)
                 </div>
@@ -116,7 +144,7 @@ export const TaskInput = ({ activeTask, onStart, onStop }) => {
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Add any additional details..."
                   rows="3"
-                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-100 resize-none transition-all placeholder:text-slate-400"
+                  className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 resize-none transition-all text-slate-200 placeholder:text-slate-500"
                 />
               </div>
             </div>

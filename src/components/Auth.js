@@ -1,27 +1,10 @@
 import React from 'react';
 
 export const Auth = ({ onSignIn }) => {
-  const handleClick = () => {
-    console.log('=== BUTTON CLICKED ===');
-    console.log('onSignIn function:', onSignIn);
-    console.log('typeof onSignIn:', typeof onSignIn);
-    
-    if (typeof onSignIn === 'function') {
-      console.log('Calling onSignIn...');
-      onSignIn().then(() => {
-        console.log('onSignIn completed');
-      }).catch(err => {
-        console.error('onSignIn error:', err);
-      });
-    } else {
-      console.error('onSignIn is not a function!');
-    }
-  };
-
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%)',
+      background: '#1a1d29',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -39,10 +22,10 @@ export const Auth = ({ onSignIn }) => {
           <div style={{
             width: '80px',
             height: '80px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)',
             borderRadius: '20px',
             marginBottom: '1.5rem',
-            boxShadow: '0 20px 40px rgba(102, 126, 234, 0.3)',
+            boxShadow: '0 20px 40px rgba(139, 92, 246, 0.3)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -57,8 +40,8 @@ export const Auth = ({ onSignIn }) => {
           </div>
           <h1 style={{
             fontSize: '2.5rem',
-            fontWeight: '300',
-            color: '#1f2937',
+            fontWeight: '600',
+            color: '#f3f4f6',
             marginBottom: '0.5rem',
             letterSpacing: '-0.02em'
           }}>
@@ -66,23 +49,25 @@ export const Auth = ({ onSignIn }) => {
           </h1>
           <p style={{
             fontSize: '1.125rem',
-            color: '#6b7280',
-            fontWeight: '300'
+            color: '#9ca3af',
+            fontWeight: '400'
           }}>
-            Track time beautifully
+            Track your time, achieve your goals
           </p>
         </div>
 
         {/* Sign in card */}
         <div style={{
-          background: 'white',
-          borderRadius: '24px',
+          background: 'rgba(51, 65, 85, 0.3)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '20px',
           padding: '2.5rem',
-          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.08)',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+          border: '1px solid rgba(148, 163, 184, 0.1)',
           marginBottom: '2rem'
         }}>
           <button
-            onClick={handleClick}
+            onClick={onSignIn}
             style={{
               width: '100%',
               display: 'flex',
@@ -91,8 +76,8 @@ export const Auth = ({ onSignIn }) => {
               gap: '12px',
               padding: '16px 24px',
               background: 'white',
-              border: '2px solid #e5e7eb',
-              borderRadius: '16px',
+              border: 'none',
+              borderRadius: '12px',
               fontSize: '1rem',
               fontWeight: '500',
               color: '#1f2937',
@@ -101,12 +86,10 @@ export const Auth = ({ onSignIn }) => {
               outline: 'none'
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.borderColor = '#667eea';
               e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 12px 24px rgba(102, 126, 234, 0.15)';
+              e.currentTarget.style.boxShadow = '0 12px 24px rgba(139, 92, 246, 0.3)';
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.borderColor = '#e5e7eb';
               e.currentTarget.style.transform = 'translateY(0)';
               e.currentTarget.style.boxShadow = 'none';
             }}
@@ -123,7 +106,7 @@ export const Auth = ({ onSignIn }) => {
           <div style={{
             marginTop: '2rem',
             paddingTop: '2rem',
-            borderTop: '1px solid #f3f4f6'
+            borderTop: '1px solid rgba(148, 163, 184, 0.1)'
           }}>
             <div style={{
               display: 'grid',
@@ -138,12 +121,13 @@ export const Auth = ({ onSignIn }) => {
               ].map(([icon, text], i) => (
                 <div key={i} style={{
                   padding: '12px',
-                  background: 'linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%)',
+                  background: 'rgba(139, 92, 246, 0.1)',
                   borderRadius: '12px',
-                  textAlign: 'center'
+                  textAlign: 'center',
+                  border: '1px solid rgba(139, 92, 246, 0.2)'
                 }}>
                   <div style={{ fontSize: '1.5rem', marginBottom: '4px' }}>{icon}</div>
-                  <div style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '500' }}>{text}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#cbd5e1', fontWeight: '500' }}>{text}</div>
                 </div>
               ))}
             </div>
@@ -153,7 +137,7 @@ export const Auth = ({ onSignIn }) => {
         <p style={{
           textAlign: 'center',
           fontSize: '0.875rem',
-          color: '#9ca3af'
+          color: '#6b7280'
         }}>
           Free to use • No credit card required
         </p>

@@ -169,10 +169,10 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#1a1d29] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600 text-lg">Loading...</p>
+          <div className="w-16 h-16 border-4 border-slate-700 border-t-purple-500 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-400 text-lg">Loading...</p>
         </div>
       </div>
     );
@@ -186,9 +186,9 @@ function App() {
     <>
       <ActiveTimer activeTask={activeTask} elapsedTime={elapsedTime} />
       
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-6">
+      <div className="min-h-screen bg-[#1a1d29] p-4 md:p-6">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-slate-200/50 p-6 md:p-8 mb-6">
+          <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-700/50 p-6 md:p-8 mb-6">
             <Header 
               isOnline={isOnline} 
               isSyncing={isSyncing} 
@@ -208,13 +208,13 @@ function App() {
             
             {view === 'tasks' && activeTask && (
               <div className="text-center py-12">
-                <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-100 rounded-full mb-4">
-                  <div className="w-12 h-12 border-4 border-blue-300 border-t-blue-600 rounded-full animate-spin"></div>
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-purple-500/10 rounded-full mb-4 border border-purple-500/20">
+                  <div className="w-12 h-12 border-4 border-slate-700 border-t-purple-500 rounded-full animate-spin"></div>
                 </div>
-                <p className="text-slate-600 mb-6 text-lg">Timer is running in fullscreen mode</p>
+                <p className="text-slate-300 mb-6 text-lg">Timer is running</p>
                 <button
                   onClick={stopTask}
-                  className="px-8 py-4 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-2xl font-medium hover:shadow-lg transition-all duration-300 hover:scale-105"
+                  className="px-8 py-4 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-medium transition-all"
                 >
                   Stop Task
                 </button>

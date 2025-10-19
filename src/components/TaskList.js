@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { formatTime } from '../utils/timeUtils';
-import { Trash2, Edit2, Download, Filter } from 'lucide-react';
+import { Trash2, Edit2, Download, Filter, Clock, Check, X } from 'lucide-react';
 
 const CATEGORIES = [
   { id: 'study', name: 'Study', color: '#3b82f6', icon: '📚' },
@@ -68,13 +68,17 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
   };
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-slate-200/50 p-6 md:p-8">
+    <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 md:p-8">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-light text-slate-800">Recent Tasks</h2>
+        <h2 className="text-xl font-semibold text-slate-100">Recent Tasks</h2>
         <div className="flex gap-2">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-xl border border-slate-200 hover:bg-slate-200 text-sm font-medium transition-all"
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+              showFilters 
+                ? 'bg-purple-500/20 text-purple-300 border border-purple-500/50' 
+                : 'bg-slate-700/50 text-slate-300 hover:bg-slate-700'
+            }`}
           >
             <Filter className="w-4 h-4" />
             <span className="hidden sm:inline">Filter</span>
@@ -82,7 +86,7 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
           {tasks.length > 0 && (
             <button
               onClick={exportToCSV}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:shadow-lg text-sm font-medium transition-all duration-300"
+              className="flex items-center gap-2 px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-sm font-medium transition-all"
             >
               <Download className="w-4 h-4" />
               <span className="hidden sm:inline">Export</span>
@@ -92,15 +96,15 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
       </div>
 
       {showFilters && (
-        <div className="mb-6 p-5 bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl border border-slate-200">
-          <div className="text-sm font-medium text-slate-700 mb-3">Filter by Category</div>
+        <div className="mb-6 p-4 bg-slate-700/30 rounded-xl border border-slate-600/50">
+          <div className="text-sm font-medium text-slate-300 mb-3">Filter by Category</div>
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setFilterCategory('all')}
-              className={`px-3 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 filterCategory === 'all'
-                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:border-slate-300'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-slate-700/50 text-slate-300 hover:bg-slate-700'
               }`}
             >
               All ({tasks.length})
@@ -112,13 +116,14 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
                 <button
                   key={cat.id}
                   onClick={() => setFilterCategory(cat.id)}
-                  className={`px-3 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                     filterCategory === cat.id
-                      ? 'bg-white border-2 shadow-lg scale-105'
-                      : 'bg-white border border-slate-200 hover:border-slate-300'
+                      ? 'bg-slate-700 border-2'
+                      : 'bg-slate-700/50 hover:bg-slate-700'
                   }`}
                   style={{
-                    borderColor: filterCategory === cat.id ? cat.color : undefined
+                    borderColor: filterCategory === cat.id ? cat.color : 'transparent',
+                    color: filterCategory === cat.id ? cat.color : '#cbd5e1'
                   }}
                 >
                   {cat.icon} {cat.name} ({count})
@@ -130,10 +135,13 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
       )}
 
       {filteredTasks.length === 0 ? (
-        <div className="text-center py-12 text-slate-500">
-          {tasks.length === 0 
-            ? 'No tasks tracked yet. Start tracking your first task!' 
-            : 'No tasks found in this category.'}
+        <div className="text-center py-12">
+          <Clock className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+          <p className="text-slate-400">
+            {tasks.length === 0 
+              ? 'No tasks tracked yet. Start your first task!' 
+              : 'No tasks found in this category.'}
+          </p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -142,30 +150,32 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
             
             if (editingId === task.id) {
               return (
-                <div key={task.id} className="p-5 bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl border border-slate-200">
+                <div key={task.id} className="p-4 bg-slate-700/40 rounded-xl border border-slate-600/50">
                   <input
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="w-full px-4 py-3 mb-3 border-2 border-slate-200 rounded-xl focus:border-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-100"
+                    className="w-full px-3 py-2 mb-3 bg-slate-800/50 border border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 text-slate-200"
                   />
                   <textarea
                     value={editNotes}
                     onChange={(e) => setEditNotes(e.target.value)}
                     placeholder="Notes..."
                     rows="2"
-                    className="w-full px-4 py-3 mb-4 border-2 border-slate-200 rounded-xl focus:border-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-100 resize-none"
+                    className="w-full px-3 py-2 mb-3 bg-slate-800/50 border border-slate-600 rounded-lg focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 resize-none text-slate-200"
                   />
                   <div className="flex gap-2">
                     <button
                       onClick={saveEdit}
-                      className="px-5 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:shadow-lg text-sm font-medium transition-all duration-300"
+                      className="flex-1 sm:flex-none px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2"
                     >
+                      <Check className="w-4 h-4" />
                       Save
                     </button>
                     <button
                       onClick={cancelEdit}
-                      className="px-5 py-2 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 text-sm font-medium transition-all"
+                      className="flex-1 sm:flex-none px-4 py-2 bg-slate-600/50 hover:bg-slate-600 text-slate-300 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2"
                     >
+                      <X className="w-4 h-4" />
                       Cancel
                     </button>
                   </div>
@@ -176,48 +186,43 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
             return (
               <div 
                 key={task.id} 
-                className="flex justify-between items-start p-4 bg-gradient-to-br from-white to-slate-50 rounded-2xl border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300"
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-slate-700/30 rounded-xl border border-slate-600/50 hover:border-purple-500/50 transition-all group"
               >
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2">
                     <span
-                      className="px-3 py-1 rounded-xl text-xs font-medium"
+                      className="px-2 py-1 rounded-lg text-xs font-medium"
                       style={{
-                        backgroundColor: `${categoryInfo.color}15`,
+                        backgroundColor: `${categoryInfo.color}20`,
                         color: categoryInfo.color,
                       }}
                     >
                       {categoryInfo.icon} {categoryInfo.name}
                     </span>
                   </div>
-                  <div className="font-medium text-slate-800 mb-1">{task.name}</div>
+                  <div className="font-medium text-slate-100 mb-1">{task.name}</div>
                   {task.notes && (
-                    <div className="text-sm text-slate-600 italic mb-2">"{task.notes}"</div>
+                    <div className="text-sm text-slate-400 italic mb-2">"{task.notes}"</div>
                   )}
                   <div className="text-xs text-slate-500">
                     {new Date(task.startTime).toLocaleString()}
                   </div>
                 </div>
-                <div className="flex items-center gap-3 ml-4">
-                  <div className="text-right">
-                    <div className="font-mono font-semibold text-slate-800">
-                      {formatTime(task.duration)}
-                    </div>
-                    {!task.synced && (
-                      <span className="text-xs text-slate-400" title="Not synced yet">⏳</span>
-                    )}
+                <div className="flex items-center justify-between sm:justify-end gap-3">
+                  <div className="font-mono font-semibold text-lg text-purple-400">
+                    {formatTime(task.duration)}
                   </div>
                   <div className="flex gap-1">
                     <button
                       onClick={() => startEdit(task)}
-                      className="p-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
+                      className="p-2 text-slate-400 hover:text-purple-400 hover:bg-purple-500/20 rounded-lg transition-all"
                       title="Edit task"
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => onDelete(task.id)}
-                      className="p-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                      className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/20 rounded-lg transition-all"
                       title="Delete task"
                     >
                       <Trash2 className="w-4 h-4" />

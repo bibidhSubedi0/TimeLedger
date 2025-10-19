@@ -58,31 +58,34 @@ export const StatsGrid = ({ tasks, goals }) => {
       icon: Calendar,
       label: 'Today',
       value: formatTime(getTodayTime()),
-      gradient: 'from-blue-500 to-cyan-500',
-      bg: 'from-blue-50 to-cyan-50'
+      color: 'blue'
     },
     {
       icon: TrendingUp,
       label: 'This Week',
       value: formatTime(getWeekTime()),
-      gradient: 'from-indigo-500 to-purple-500',
-      bg: 'from-indigo-50 to-purple-50'
+      color: 'purple'
     },
     {
       icon: Award,
       label: 'Streak',
       value: `${getStreak()} days`,
-      gradient: 'from-emerald-500 to-green-500',
-      bg: 'from-emerald-50 to-green-50'
+      color: 'emerald'
     },
     {
       icon: Target,
       label: 'Active Goals',
       value: activeGoals.length,
-      gradient: 'from-pink-500 to-rose-500',
-      bg: 'from-pink-50 to-rose-50'
+      color: 'amber'
     }
   ];
+
+  const colorClasses = {
+    blue: 'from-blue-500 to-cyan-500',
+    purple: 'from-purple-500 to-pink-500',
+    emerald: 'from-emerald-500 to-green-500',
+    amber: 'from-amber-500 to-orange-500'
+  };
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -91,15 +94,15 @@ export const StatsGrid = ({ tasks, goals }) => {
         return (
           <div 
             key={index}
-            className={`bg-gradient-to-br ${stat.bg} backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50 p-5 hover:scale-105 transition-transform duration-300`}
+            className="bg-slate-800/40 backdrop-blur-sm rounded-xl border border-slate-700/50 p-5 hover:border-purple-500/50 transition-all"
           >
             <div className="flex items-center gap-3 mb-3">
-              <div className={`w-10 h-10 bg-gradient-to-br ${stat.gradient} rounded-xl flex items-center justify-center shadow-lg`}>
+              <div className={`w-10 h-10 bg-gradient-to-br ${colorClasses[stat.color]} rounded-lg flex items-center justify-center`}>
                 <Icon className="w-5 h-5 text-white" />
               </div>
-              <div className="text-sm text-slate-600 font-medium">{stat.label}</div>
+              <div className="text-sm text-slate-400 font-medium">{stat.label}</div>
             </div>
-            <div className="text-2xl font-semibold text-slate-800">{stat.value}</div>
+            <div className="text-2xl font-bold text-slate-100">{stat.value}</div>
           </div>
         );
       })}

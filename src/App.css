@@ -10,8 +10,8 @@ body {
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
-  color: #1e293b;
+  background: #1a1d29;
+  color: #e5e7eb;
   overflow-x: hidden;
 }
 
@@ -27,22 +27,18 @@ code {
   right: 0;
   bottom: 0;
   z-index: 9999;
-  background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 100%);
+  background: linear-gradient(135deg, #1e2738 0%, #2d1b3d 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeIn 0.4s ease;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .timer-content {
@@ -57,7 +53,7 @@ code {
   width: 400px;
   height: 400px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(129, 140, 248, 0.2) 0%, rgba(165, 180, 252, 0) 70%);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -68,27 +64,27 @@ code {
 @keyframes pulse {
   0%, 100% {
     transform: translate(-50%, -50%) scale(1);
-    opacity: 0.5;
+    opacity: 0.4;
   }
   50% {
     transform: translate(-50%, -50%) scale(1.1);
-    opacity: 0.8;
+    opacity: 0.6;
   }
 }
 
 .timer-task-name {
   font-size: clamp(1.5rem, 5vw, 2.5rem);
-  font-weight: 400;
-  color: #475569;
+  font-weight: 500;
+  color: #f3f4f6;
   margin-bottom: 1rem;
-  letter-spacing: 0.02em;
-  animation: slideDown 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+  letter-spacing: -0.01em;
+  animation: slideDown 0.5s ease 0.1s both;
 }
 
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-30px);
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;
@@ -99,14 +95,14 @@ code {
 .timer-category-badge {
   display: inline-block;
   padding: 0.5rem 1.5rem;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(139, 92, 246, 0.1);
   backdrop-filter: blur(10px);
   border-radius: 50px;
   font-size: clamp(0.875rem, 2vw, 1rem);
-  color: #64748b;
-  margin-bottom: 3rem;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  animation: slideDown 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+  color: #a78bfa;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  animation: slideDown 0.5s ease 0.2s both;
 }
 
 .timer-display {
@@ -117,19 +113,18 @@ code {
 .timer-main {
   font-size: clamp(4rem, 15vw, 10rem);
   font-weight: 300;
-  color: #1e293b;
+  color: #f9fafb;
   font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
   line-height: 1;
   letter-spacing: 0.05em;
-  text-shadow: 0 0 40px rgba(99, 102, 241, 0.15);
-  animation: scaleIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
-  margin: 2rem 0;
+  animation: scaleIn 0.6s ease 0.3s both;
+  margin: 1.5rem 0;
 }
 
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale(0.95);
   }
   to {
     opacity: 1;
@@ -139,22 +134,22 @@ code {
 
 .timer-subseconds {
   font-size: clamp(2rem, 6vw, 4rem);
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
 .timer-actions {
-  margin-top: 4rem;
+  margin-top: 3rem;
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
-  animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.6s both;
+  animation: slideUp 0.5s ease 0.4s both;
 }
 
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -163,74 +158,62 @@ code {
 }
 
 .timer-btn {
-  padding: 1.25rem 3rem;
-  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  padding: 1rem 2.5rem;
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
   font-weight: 500;
-  border-radius: 50px;
-  border: 2px solid rgba(148, 163, 184, 0.3);
-  background: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  background: rgba(139, 92, 246, 0.1);
   backdrop-filter: blur(10px);
-  color: #475569;
+  color: #e5e7eb;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  letter-spacing: 0.02em;
+  gap: 0.5rem;
 }
 
 .timer-btn:hover {
-  background: rgba(255, 255, 255, 0.7);
-  border-color: rgba(99, 102, 241, 0.5);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+  background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.5);
+  transform: translateY(-1px);
 }
 
 .timer-btn:active {
   transform: translateY(0);
 }
 
-.timer-btn-stop {
-  background: rgba(248, 113, 113, 0.2);
-  border-color: rgba(248, 113, 113, 0.5);
-}
-
-.timer-btn-stop:hover {
-  background: rgba(248, 113, 113, 0.3);
-  border-color: rgba(239, 68, 68, 0.7);
-}
-
 .timer-notes {
-  margin-top: 3rem;
+  margin-top: 2rem;
   padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(139, 92, 246, 0.05);
   backdrop-filter: blur(10px);
-  border-radius: 20px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.7s both;
+  border-radius: 16px;
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  animation: slideUp 0.5s ease 0.5s both;
 }
 
 .timer-notes-label {
   font-size: 0.875rem;
-  color: #64748b;
+  color: #9ca3af;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   margin-bottom: 0.5rem;
 }
 
 .timer-notes-text {
   font-size: clamp(1rem, 2.5vw, 1.125rem);
-  color: #475569;
+  color: #d1d5db;
   font-style: italic;
   line-height: 1.6;
 }
 
-/* Floating particles effect */
+/* Floating particles - subtle */
 .timer-particle {
   position: absolute;
-  width: 4px;
-  height: 4px;
-  background: rgba(99, 102, 241, 0.4);
+  width: 3px;
+  height: 3px;
+  background: rgba(139, 92, 246, 0.3);
   border-radius: 50%;
   pointer-events: none;
   animation: float 20s infinite;
@@ -263,26 +246,15 @@ code {
   }
 }
 
-/* Mobile adjustments for fullscreen timer */
+/* Mobile adjustments */
 @media (max-width: 768px) {
   .fullscreen-timer-overlay {
     padding: 1.5rem;
   }
   
-  .timer-task-name {
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
-  }
-  
-  .timer-category-badge {
-    font-size: 0.875rem;
-    padding: 0.4rem 1rem;
-    margin-bottom: 2rem;
-  }
-  
   .timer-main {
     font-size: 4rem;
-    margin: 1.5rem 0;
+    margin: 1rem 0;
   }
   
   .timer-subseconds {
@@ -290,18 +262,15 @@ code {
   }
   
   .timer-actions {
-    margin-top: 3rem;
-    gap: 1rem;
+    margin-top: 2rem;
+    width: 100%;
   }
   
   .timer-btn {
-    padding: 1rem 2rem;
-    font-size: 0.9rem;
-  }
-  
-  .timer-notes {
-    margin-top: 2rem;
-    padding: 1rem;
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+    flex: 1;
+    justify-content: center;
   }
   
   .timer-glow {
@@ -311,10 +280,6 @@ code {
 }
 
 @media (max-width: 480px) {
-  .timer-task-name {
-    font-size: 1.25rem;
-  }
-
   .timer-main {
     font-size: 3rem;
   }
@@ -325,11 +290,9 @@ code {
 
   .timer-actions {
     flex-direction: column;
-    width: 100%;
   }
   
   .timer-btn {
     width: 100%;
-    justify-content: center;
   }
 }

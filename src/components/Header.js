@@ -7,11 +7,11 @@ export const Header = ({ isOnline, isSyncing, view, setView, user, onSignOut }) 
     <>
       <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center rounded-2xl shadow-lg shadow-blue-500/30">
+          <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-500 flex items-center justify-center rounded-xl">
             <Clock className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-light text-slate-800 tracking-tight">
+            <h1 className="text-2xl font-semibold text-slate-100 tracking-tight">
               Time Tracker
             </h1>
             <p className="text-xs text-slate-500 hidden sm:block">Track your productivity</p>
@@ -19,43 +19,43 @@ export const Header = ({ isOnline, isSyncing, view, setView, user, onSignOut }) 
         </div>
         <div className="flex items-center gap-3">
           {user && (
-            <div className="flex items-center gap-2 px-3 py-2 bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl border border-slate-200">
+            <div className="flex items-center gap-2 px-3 py-2 bg-slate-700/50 rounded-xl border border-slate-600/50">
               {user.user_metadata?.avatar_url ? (
                 <img 
                   src={user.user_metadata.avatar_url} 
                   alt="Profile" 
-                  className="w-7 h-7 rounded-full shadow"
+                  className="w-7 h-7 rounded-full"
                 />
               ) : (
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center">
+                <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center">
                   <User className="w-4 h-4 text-white" />
                 </div>
               )}
-              <span className="text-sm text-slate-700 hidden md:inline font-medium max-w-[100px] truncate">
+              <span className="text-sm text-slate-300 hidden md:inline font-medium max-w-[100px] truncate">
                 {user.user_metadata?.full_name?.split(' ')[0] || user.email?.split('@')[0]}
               </span>
               <button
                 onClick={onSignOut}
-                className="p-1.5 hover:bg-red-50 rounded-xl transition-colors group"
+                className="p-1.5 hover:bg-red-500/20 rounded-lg transition-colors group"
                 title="Sign out"
               >
-                <LogOut className="w-4 h-4 text-slate-500 group-hover:text-red-500 transition-colors" />
+                <LogOut className="w-4 h-4 text-slate-400 group-hover:text-red-400 transition-colors" />
               </button>
             </div>
           )}
           {isSyncing && (
-            <div className="p-2 bg-blue-50 rounded-xl">
-              <RefreshCw className="w-4 h-4 text-blue-600 animate-spin" />
+            <div className="p-2 bg-purple-500/20 rounded-lg border border-purple-500/30">
+              <RefreshCw className="w-4 h-4 text-purple-400 animate-spin" />
             </div>
           )}
           <div 
-            className={`px-3 py-2 rounded-2xl text-xs font-medium flex items-center border ${
+            className={`px-3 py-2 rounded-xl text-xs font-medium flex items-center border ${
               isOnline 
-                ? 'bg-gradient-to-br from-emerald-50 to-green-50 text-emerald-700 border-emerald-200' 
-                : 'bg-slate-100 text-slate-600 border-slate-200'
+                ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' 
+                : 'bg-slate-700/50 text-slate-400 border-slate-600/50'
             }`}
           >
-            <span className={`inline-block w-2 h-2 rounded-full mr-2 ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`}></span>
+            <span className={`inline-block w-2 h-2 rounded-full mr-2 ${isOnline ? 'bg-emerald-400' : 'bg-slate-500'}`}></span>
             <span className="hidden sm:inline">
               {isOnline ? 'Online' : 'Offline'}
             </span>
@@ -66,10 +66,10 @@ export const Header = ({ isOnline, isSyncing, view, setView, user, onSignOut }) 
       <div className="grid grid-cols-3 gap-3 mb-8">
         <button
           onClick={() => setView('tasks')}
-          className={`flex items-center justify-center gap-2 px-4 py-3 rounded-2xl font-medium transition-all duration-300 ${
+          className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all ${
             view === 'tasks' 
-              ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30 scale-105' 
-              : 'bg-slate-50 text-slate-600 border border-slate-200 hover:border-blue-300 hover:bg-blue-50'
+              ? 'bg-purple-600 text-white' 
+              : 'bg-slate-700/30 text-slate-400 border border-slate-600/50 hover:bg-slate-700/50'
           }`}
         >
           <List className="w-5 h-5" />
@@ -77,10 +77,10 @@ export const Header = ({ isOnline, isSyncing, view, setView, user, onSignOut }) 
         </button>
         <button
           onClick={() => setView('analytics')}
-          className={`flex items-center justify-center gap-2 px-4 py-3 rounded-2xl font-medium transition-all duration-300 ${
+          className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all ${
             view === 'analytics' 
-              ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30 scale-105' 
-              : 'bg-slate-50 text-slate-600 border border-slate-200 hover:border-blue-300 hover:bg-blue-50'
+              ? 'bg-purple-600 text-white' 
+              : 'bg-slate-700/30 text-slate-400 border border-slate-600/50 hover:bg-slate-700/50'
           }`}
         >
           <BarChart3 className="w-5 h-5" />
@@ -88,10 +88,10 @@ export const Header = ({ isOnline, isSyncing, view, setView, user, onSignOut }) 
         </button>
         <button
           onClick={() => setView('goals')}
-          className={`flex items-center justify-center gap-2 px-4 py-3 rounded-2xl font-medium transition-all duration-300 ${
+          className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all ${
             view === 'goals' 
-              ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30 scale-105' 
-              : 'bg-slate-50 text-slate-600 border border-slate-200 hover:border-blue-300 hover:bg-blue-50'
+              ? 'bg-purple-600 text-white' 
+              : 'bg-slate-700/30 text-slate-400 border border-slate-600/50 hover:bg-slate-700/50'
           }`}
         >
           <Target className="w-5 h-5" />
@@ -100,7 +100,7 @@ export const Header = ({ isOnline, isSyncing, view, setView, user, onSignOut }) 
       </div>
 
       {!supabase && (
-        <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4 mb-6 text-sm text-slate-700">
+        <div className="bg-amber-500/20 border border-amber-500/30 rounded-xl p-4 mb-6 text-sm text-amber-200">
           ⚠️ Supabase not configured. Add credentials to enable sync.
         </div>
       )}

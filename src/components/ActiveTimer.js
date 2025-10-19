@@ -5,7 +5,7 @@ import { Maximize2, Minimize2 } from 'lucide-react';
 const CATEGORIES = [
   { id: 'study', name: 'Study', color: '#3b82f6', icon: '📚' },
   { id: 'work', name: 'Work', color: '#8b5cf6', icon: '💼' },
-  { id: 'gaming', name: 'Gaming', color: '#ec4899', icon: '🎮'},
+  { id: 'gaming', name: 'Gaming', color: '#ec4899', icon: '🎮' },
   { id: 'exercise', name: 'Exercise', color: '#10b981', icon: '💪' },
   { id: 'reading', name: 'Reading', color: '#f59e0b', icon: '📖' },
   { id: 'coding', name: 'Coding', color: '#06b6d4', icon: '💻' },
@@ -45,18 +45,18 @@ export const ActiveTimer = ({ activeTask, elapsedTime }) => {
   if (!isFullscreen) {
     return (
       <div className="fixed top-4 right-4 z-50 w-80 max-w-[calc(100vw-2rem)]">
-        <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200 p-5">
+        <div className="bg-slate-800/90 backdrop-blur-xl rounded-xl shadow-2xl border border-slate-700 p-5">
           <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <div className="text-xs text-blue-600 font-semibold mb-2 tracking-wide">TRACKING</div>
-              <div className="text-lg font-medium text-slate-800 mb-3 truncate">{activeTask.name}</div>
-              <div className="text-3xl font-mono font-semibold text-blue-600">
+            <div className="flex-1 min-w-0">
+              <div className="text-xs text-purple-400 font-semibold mb-2 tracking-wide">TRACKING</div>
+              <div className="text-lg font-medium text-slate-100 mb-3 truncate">{activeTask.name}</div>
+              <div className="text-3xl font-mono font-semibold text-purple-400">
                 {formatTime(elapsedTime)}
               </div>
             </div>
             <button
               onClick={() => setIsFullscreen(true)}
-              className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105"
+              className="p-3 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-all"
               title="Fullscreen timer"
             >
               <Maximize2 className="w-5 h-5" />
