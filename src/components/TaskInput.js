@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { Play, Square, Tag, FileText, ChevronDown, ChevronUp } from 'lucide-react';
 
 const CATEGORIES = [
-  { id: 'study', name: 'Study', color: '#667eea', icon: '📚' },
-  { id: 'work', name: 'Work', color: '#764ba2', icon: '💼' },
+  { id: 'study', name: 'Study', color: '#3b82f6', icon: '📚' },
+  { id: 'work', name: 'Work', color: '#8b5cf6', icon: '💼' },
   { id: 'gaming', name: 'Gaming', color: '#ec4899', icon: '🎮' },
   { id: 'exercise', name: 'Exercise', color: '#10b981', icon: '💪' },
   { id: 'reading', name: 'Reading', color: '#f59e0b', icon: '📖' },
-  { id: 'coding', name: 'Coding', color: '#3b82f6', icon: '💻' },
+  { id: 'coding', name: 'Coding', color: '#06b6d4', icon: '💻' },
   { id: 'creative', name: 'Creative', color: '#f97316', icon: '🎨' },
-  { id: 'other', name: 'Other', color: '#6b7280', icon: '📌' },
+  { id: 'other', name: 'Other', color: '#64748b', icon: '📌' },
 ];
 
 export const TaskInput = ({ activeTask, onStart, onStop }) => {
@@ -35,8 +35,8 @@ export const TaskInput = ({ activeTask, onStart, onStop }) => {
   const selectedCategory = CATEGORIES.find(c => c.id === category) || CATEGORIES[0];
 
   return (
-    <div className="space-y-3">
-      <div className="flex gap-2">
+    <div className="space-y-4">
+      <div className="flex gap-3">
         <input
           type="text"
           value={taskName}
@@ -44,14 +44,13 @@ export const TaskInput = ({ activeTask, onStart, onStop }) => {
           onKeyPress={handleKeyPress}
           placeholder="What are you working on?"
           disabled={!!activeTask}
-          className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500 transition-all"
-          style={{ fontSize: '1rem' }}
+          className="flex-1 px-5 py-4 border-2 border-slate-200 rounded-2xl focus:border-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-100 disabled:bg-slate-50 disabled:text-slate-500 transition-all text-base placeholder:text-slate-400"
         />
         {!activeTask ? (
           <button
             onClick={handleStart}
             disabled={!taskName.trim()}
-            className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-2 transition-all"
+            className="px-6 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl font-medium hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center gap-2 transition-all duration-300"
           >
             <Play className="w-5 h-5" fill="currentColor" />
             <span className="hidden sm:inline">Start</span>
@@ -59,7 +58,7 @@ export const TaskInput = ({ activeTask, onStart, onStop }) => {
         ) : (
           <button
             onClick={onStop}
-            className="px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 flex items-center gap-2 transition-all"
+            className="px-6 py-4 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-2xl font-medium hover:shadow-lg hover:scale-105 flex items-center gap-2 transition-all duration-300"
           >
             <Square className="w-5 h-5" fill="currentColor" />
             <span className="hidden sm:inline">Stop</span>
@@ -71,63 +70,35 @@ export const TaskInput = ({ activeTask, onStart, onStop }) => {
         <>
           <button
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="text-sm text-gray-600 hover:text-indigo-600 flex items-center gap-2 transition-colors"
+            className="text-sm text-slate-500 hover:text-blue-600 flex items-center gap-2 transition-colors"
           >
             {showAdvanced ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             {showAdvanced ? 'Hide' : 'Show'} category & notes
           </button>
 
           {showAdvanced && (
-            <div style={{ 
-              padding: '20px', 
-              backgroundColor: '#f8fafc', 
-              borderRadius: '12px', 
-              border: '2px solid #e0e7ff',
-            }}>
-              <div style={{ marginBottom: '20px' }}>
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '8px', 
-                  marginBottom: '16px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#374151',
-                }}>
-                  <Tag style={{ width: '16px', height: '16px' }} />
+            <div className="p-6 bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl border border-slate-200">
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-4 text-sm font-medium text-slate-700">
+                  <Tag className="w-4 h-4" />
                   Category
                 </div>
                 
-                <div style={{ 
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(3, 1fr)',
-                  gap: '8px',
-                }}>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {CATEGORIES.map(cat => (
                     <button
                       key={cat.id}
                       onClick={() => setCategory(cat.id)}
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '4px',
-                        padding: '10px 6px',
-                        borderRadius: '6px',
-                        borderWidth: '2px',
-                        borderStyle: 'solid',
-                        borderColor: category === cat.id ? cat.color : '#e5e7eb',
-                        backgroundColor: category === cat.id ? 'white' : '#f9fafb',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        textAlign: 'center',
-                      }}
+                      className={`flex flex-col items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all duration-300 ${
+                        category === cat.id
+                          ? 'bg-white border-blue-400 shadow-lg scale-105'
+                          : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-md'
+                      }`}
                     >
-                      <span style={{ fontSize: '24px' }}>{cat.icon}</span>
-                      <span style={{ color: category === cat.id ? cat.color : '#4b5563' }}>
+                      <span className="text-2xl">{cat.icon}</span>
+                      <span className={`text-xs font-medium ${
+                        category === cat.id ? 'text-blue-600' : 'text-slate-600'
+                      }`}>
                         {cat.name}
                       </span>
                     </button>
@@ -136,16 +107,8 @@ export const TaskInput = ({ activeTask, onStart, onStop }) => {
               </div>
 
               <div>
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '8px', 
-                  marginBottom: '12px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#374151',
-                }}>
-                  <FileText style={{ width: '16px', height: '16px' }} />
+                <div className="flex items-center gap-2 mb-3 text-sm font-medium text-slate-700">
+                  <FileText className="w-4 h-4" />
                   Notes (optional)
                 </div>
                 <textarea
@@ -153,7 +116,7 @@ export const TaskInput = ({ activeTask, onStart, onStop }) => {
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Add any additional details..."
                   rows="3"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:outline-none resize-none transition-all"
+                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-100 resize-none transition-all placeholder:text-slate-400"
                 />
               </div>
             </div>

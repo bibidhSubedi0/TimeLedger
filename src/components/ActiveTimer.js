@@ -3,14 +3,14 @@ import { formatTime } from '../utils/timeUtils';
 import { Maximize2, Minimize2 } from 'lucide-react';
 
 const CATEGORIES = [
-  { id: 'study', name: 'Study', color: '#667eea', icon: '📚' },
-  { id: 'work', name: 'Work', color: '#764ba2', icon: '💼' },
+  { id: 'study', name: 'Study', color: '#3b82f6', icon: '📚' },
+  { id: 'work', name: 'Work', color: '#8b5cf6', icon: '💼' },
   { id: 'gaming', name: 'Gaming', color: '#ec4899', icon: '🎮'},
   { id: 'exercise', name: 'Exercise', color: '#10b981', icon: '💪' },
   { id: 'reading', name: 'Reading', color: '#f59e0b', icon: '📖' },
-  { id: 'coding', name: 'Coding', color: '#3b82f6', icon: '💻' },
+  { id: 'coding', name: 'Coding', color: '#06b6d4', icon: '💻' },
   { id: 'creative', name: 'Creative', color: '#f97316', icon: '🎨' },
-  { id: 'other', name: 'Other', color: '#6b7280', icon: '📌' },
+  { id: 'other', name: 'Other', color: '#64748b', icon: '📌' },
 ];
 
 export const ActiveTimer = ({ activeTask, elapsedTime }) => {
@@ -44,22 +44,24 @@ export const ActiveTimer = ({ activeTask, elapsedTime }) => {
   // Compact timer (when not fullscreen)
   if (!isFullscreen) {
     return (
-      <div className="bg-indigo-50 rounded-lg p-4 mb-4 border-2 border-indigo-200">
-        <div className="flex items-center justify-between">
-          <div className="flex-1">
-            <div className="text-sm text-indigo-600 font-semibold mb-1">TRACKING</div>
-            <div className="text-xl font-bold text-gray-800 mb-2">{activeTask.name}</div>
-            <div className="text-3xl font-mono font-bold text-indigo-600">
-              {formatTime(elapsedTime)}
+      <div className="fixed top-4 right-4 z-50 w-80 max-w-[calc(100vw-2rem)]">
+        <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200 p-5">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <div className="text-xs text-blue-600 font-semibold mb-2 tracking-wide">TRACKING</div>
+              <div className="text-lg font-medium text-slate-800 mb-3 truncate">{activeTask.name}</div>
+              <div className="text-3xl font-mono font-semibold text-blue-600">
+                {formatTime(elapsedTime)}
+              </div>
             </div>
+            <button
+              onClick={() => setIsFullscreen(true)}
+              className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105"
+              title="Fullscreen timer"
+            >
+              <Maximize2 className="w-5 h-5" />
+            </button>
           </div>
-          <button
-            onClick={() => setIsFullscreen(true)}
-            className="p-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all"
-            title="Fullscreen timer"
-          >
-            <Maximize2 className="w-6 h-6" />
-          </button>
         </div>
       </div>
     );
@@ -90,9 +92,9 @@ export const ActiveTimer = ({ activeTask, elapsedTime }) => {
         <div className="timer-display">
           <div className="timer-main">
             {String(hours).padStart(2, '0')}
-            <span style={{ opacity: 0.5 }}>:</span>
+            <span style={{ opacity: 0.4 }}>:</span>
             {String(minutes).padStart(2, '0')}
-            <span style={{ opacity: 0.5 }}>:</span>
+            <span style={{ opacity: 0.4 }}>:</span>
             {String(seconds).padStart(2, '0')}
             <span className="timer-subseconds">
               .{String(milliseconds).padStart(2, '0')}

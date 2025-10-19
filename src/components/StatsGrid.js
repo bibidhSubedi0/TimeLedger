@@ -53,39 +53,56 @@ export const StatsGrid = ({ tasks, goals }) => {
     return !g.completedAt;
   });
 
+  const stats = [
+    {
+      icon: Calendar,
+      label: 'Today',
+      value: formatTime(getTodayTime()),
+      gradient: 'from-blue-500 to-cyan-500',
+      bg: 'from-blue-50 to-cyan-50'
+    },
+    {
+      icon: TrendingUp,
+      label: 'This Week',
+      value: formatTime(getWeekTime()),
+      gradient: 'from-indigo-500 to-purple-500',
+      bg: 'from-indigo-50 to-purple-50'
+    },
+    {
+      icon: Award,
+      label: 'Streak',
+      value: `${getStreak()} days`,
+      gradient: 'from-emerald-500 to-green-500',
+      bg: 'from-emerald-50 to-green-50'
+    },
+    {
+      icon: Target,
+      label: 'Active Goals',
+      value: activeGoals.length,
+      gradient: 'from-pink-500 to-rose-500',
+      bg: 'from-pink-50 to-rose-50'
+    }
+  ];
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-      <div className="bg-white rounded shadow-lg p-4 border border-gray-200">
-        <div className="flex items-center gap-2 mb-2">
-          <Calendar className="w-5 h-5 text-gray-700" />
-          <div className="text-sm text-gray-600">Today</div>
-        </div>
-        <div className="text-2xl font-medium text-gray-800">{formatTime(getTodayTime())}</div>
-      </div>
-
-      <div className="bg-white rounded shadow-lg p-4 border border-gray-200">
-        <div className="flex items-center gap-2 mb-2">
-          <TrendingUp className="w-5 h-5 text-gray-700" />
-          <div className="text-sm text-gray-600">This Week</div>
-        </div>
-        <div className="text-2xl font-medium text-gray-800">{formatTime(getWeekTime())}</div>
-      </div>
-
-      <div className="bg-white rounded shadow-lg p-4 border border-gray-200">
-        <div className="flex items-center gap-2 mb-2">
-          <Award className="w-5 h-5 text-gray-700" />
-          <div className="text-sm text-gray-600">Streak</div>
-        </div>
-        <div className="text-2xl font-medium text-gray-800">{getStreak()} days</div>
-      </div>
-
-      <div className="bg-white rounded shadow-lg p-4 border border-gray-200">
-        <div className="flex items-center gap-2 mb-2">
-          <Target className="w-5 h-5 text-gray-700" />
-          <div className="text-sm text-gray-600">Active Goals</div>
-        </div>
-        <div className="text-2xl font-medium text-gray-800">{activeGoals.length}</div>
-      </div>
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      {stats.map((stat, index) => {
+        const Icon = stat.icon;
+        return (
+          <div 
+            key={index}
+            className={`bg-gradient-to-br ${stat.bg} backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50 p-5 hover:scale-105 transition-transform duration-300`}
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <div className={`w-10 h-10 bg-gradient-to-br ${stat.gradient} rounded-xl flex items-center justify-center shadow-lg`}>
+                <Icon className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-sm text-slate-600 font-medium">{stat.label}</div>
+            </div>
+            <div className="text-2xl font-semibold text-slate-800">{stat.value}</div>
+          </div>
+        );
+      })}
     </div>
   );
 };

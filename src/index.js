@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
+import './index.css';  // Keep only this
 import App from './App';
 import { AuthProvider } from './contexts/AuthContext';
 import reportWebVitals from './reportWebVitals';
+
+// Remove this line: import './tailwind-output.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
