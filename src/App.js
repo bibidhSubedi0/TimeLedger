@@ -24,7 +24,7 @@ function App() {
   const [goals, setGoals] = useState([]);
   
   const isOnline = useOnlineStatus();
-  const { elapsedTime, resetTimer } = useTimer(activeTask);
+  const { elapsedTime, isPaused, resetTimer, togglePause } = useTimer(activeTask);
   const { syncData, syncGoals, isSyncing } = useTaskSync(isOnline, deviceId, user);
 
   useEffect(() => {
@@ -125,14 +125,47 @@ function App() {
     }
   };
 
-  const deleteTask = (taskId) => {
-    if (window.confirm('Are you sure you want to delete this task?')) {
-      setTasks(prev => prev.filter(t => t.id !== taskId));
+  const deleteTask = async (taskId) => {
+    // Delete from local state immediately for instant feedback
+    setTasks(prev => prev.filter(t => t.id !== taskId));
+    
+    // Delete from Supabase if online
+    if (isOnline && supabase && user) {
+      try {
+        const { error } = await supabase
+          .from('tasks')
+          .delete()
+          .eq('id', taskId)
+          .eq('user_id', user.id);
+        
+        if (error) {
+          console.error('Error deleting task from Supabase:', error);
+          // Optionally: re-sync to restore the task if deletion failed
+          syncData().then(syncedTasks => {
+            if (syncedTasks) {
+              setTasks(syncedTasks);
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error deleting task:', error);
+      }
     }
   };
 
   const updateTask = (taskId, updates) => {
     setTasks(prev => prev.map(t => t.id === taskId ? { ...t, ...updates, synced: false } : t));
+    
+    // Trigger sync to update Supabase
+    if (isOnline && supabase && user) {
+      setTimeout(() => {
+        syncData().then(syncedTasks => {
+          if (syncedTasks) {
+            setTasks(syncedTasks);
+          }
+        });
+      }, 1000);
+    }
   };
 
   const addGoal = (goal) => {
@@ -149,8 +182,32 @@ function App() {
     }
   };
 
-  const deleteGoal = (goalId) => {
+  const deleteGoal = async (goalId) => {
+    // Delete from local state immediately
     setGoals(prev => prev.filter(g => g.id !== goalId));
+    
+    // Delete from Supabase if online
+    if (isOnline && supabase && user) {
+      try {
+        const { error } = await supabase
+          .from('goals')
+          .delete()
+          .eq('id', goalId)
+          .eq('user_id', user.id);
+        
+        if (error) {
+          console.error('Error deleting goal from Supabase:', error);
+          // Optionally: re-sync to restore the goal if deletion failed
+          syncGoals().then(syncedGoals => {
+            if (syncedGoals) {
+              setGoals(syncedGoals);
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error deleting goal:', error);
+      }
+    }
   };
 
   const updateGoal = (goalId, updates) => {
@@ -184,7 +241,13 @@ function App() {
 
   return (
     <>
-      <ActiveTimer activeTask={activeTask} elapsedTime={elapsedTime} />
+      <ActiveTimer 
+        activeTask={activeTask} 
+        elapsedTime={elapsedTime}
+        isPaused={isPaused}
+        onTogglePause={togglePause}
+        onStop={stopTask}
+      />
       
       <div className="min-h-screen bg-[#1a1d29] p-4 md:p-6">
         <div className="max-w-7xl mx-auto">
@@ -209,15 +272,29 @@ function App() {
             {view === 'tasks' && activeTask && (
               <div className="text-center py-12">
                 <div className="inline-flex items-center justify-center w-20 h-20 bg-purple-500/10 rounded-full mb-4 border border-purple-500/20">
-                  <div className="w-12 h-12 border-4 border-slate-700 border-t-purple-500 rounded-full animate-spin"></div>
+                  {isPaused ? (
+                    <div className="text-3xl">⏸️</div>
+                  ) : (
+                    <div className="w-12 h-12 border-4 border-slate-700 border-t-purple-500 rounded-full animate-spin"></div>
+                  )}
                 </div>
-                <p className="text-slate-300 mb-6 text-lg">Timer is running</p>
-                <button
-                  onClick={stopTask}
-                  className="px-8 py-4 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-medium transition-all"
-                >
-                  Stop Task
-                </button>
+                <p className="text-slate-300 mb-6 text-lg">
+                  {isPaused ? 'Timer paused' : 'Timer is running'}
+                </p>
+                <div className="flex gap-3 justify-center">
+                  <button
+                    onClick={togglePause}
+                    className="px-8 py-4 bg-amber-600 hover:bg-amber-500 text-white rounded-xl font-medium transition-all"
+                  >
+                    {isPaused ? 'Resume' : 'Pause'}
+                  </button>
+                  <button
+                    onClick={stopTask}
+                    className="px-8 py-4 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-medium transition-all"
+                  >
+                    Stop Task
+                  </button>
+                </div>
               </div>
             )}
           </div>

@@ -19,6 +19,8 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
   const [editNotes, setEditNotes] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
+  const [showAllTasks, setShowAllTasks] = useState(false);
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
   const exportToCSV = () => {
     const headers = ['Task Name', 'Category', 'Start Time', 'Duration', 'Notes'];
@@ -42,6 +44,19 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
     a.click();
   };
 
+  const handleDelete = (taskId) => {
+    setDeleteConfirmId(taskId);
+  };
+
+  const confirmDelete = (taskId) => {
+    onDelete(taskId);
+    setDeleteConfirmId(null);
+  };
+
+  const cancelDelete = () => {
+    setDeleteConfirmId(null);
+  };
+
   const startEdit = (task) => {
     setEditingId(task.id);
     setEditName(task.name);
@@ -59,13 +74,24 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
     setEditNotes('');
   };
 
-  const filteredTasks = filterCategory === 'all' 
+  // Filter tasks by date - only today's tasks by default
+  const todayStart = new Date().setHours(0, 0, 0, 0);
+  const todayEnd = new Date().setHours(23, 59, 59, 999);
+  
+  const tasksToShow = showAllTasks 
     ? tasks 
-    : tasks.filter(t => t.category === filterCategory);
+    : tasks.filter(t => t.startTime >= todayStart && t.startTime <= todayEnd);
+
+  const filteredTasks = filterCategory === 'all' 
+    ? tasksToShow 
+    : tasksToShow.filter(t => t.category === filterCategory);
 
   const getCategoryInfo = (categoryId) => {
     return CATEGORIES.find(c => c.id === categoryId) || CATEGORIES[CATEGORIES.length - 1];
   };
+
+  const todayTasksCount = tasks.filter(t => t.startTime >= todayStart && t.startTime <= todayEnd).length;
+  const allTasksCount = tasks.length;
 
   return (
     <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 md:p-8">
@@ -95,6 +121,30 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
         </div>
       </div>
 
+      {/* Toggle between Today and All Tasks */}
+      <div className="mb-4 flex gap-2">
+        <button
+          onClick={() => setShowAllTasks(false)}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            !showAllTasks
+              ? 'bg-purple-600 text-white'
+              : 'bg-slate-700/50 text-slate-300 hover:bg-slate-700'
+          }`}
+        >
+          Today ({todayTasksCount})
+        </button>
+        <button
+          onClick={() => setShowAllTasks(true)}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            showAllTasks
+              ? 'bg-purple-600 text-white'
+              : 'bg-slate-700/50 text-slate-300 hover:bg-slate-700'
+          }`}
+        >
+          All Time ({allTasksCount})
+        </button>
+      </div>
+
       {showFilters && (
         <div className="mb-6 p-4 bg-slate-700/30 rounded-xl border border-slate-600/50">
           <div className="text-sm font-medium text-slate-300 mb-3">Filter by Category</div>
@@ -107,10 +157,10 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
                   : 'bg-slate-700/50 text-slate-300 hover:bg-slate-700'
               }`}
             >
-              All ({tasks.length})
+              All ({tasksToShow.length})
             </button>
             {CATEGORIES.map(cat => {
-              const count = tasks.filter(t => t.category === cat.id).length;
+              const count = tasksToShow.filter(t => t.category === cat.id).length;
               if (count === 0) return null;
               return (
                 <button
@@ -140,7 +190,9 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
           <p className="text-slate-400">
             {tasks.length === 0 
               ? 'No tasks tracked yet. Start your first task!' 
-              : 'No tasks found in this category.'}
+              : showAllTasks 
+                ? 'No tasks found in this category.'
+                : 'No tasks tracked today. Start tracking!'}
           </p>
         </div>
       ) : (
@@ -176,6 +228,29 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
                       className="flex-1 sm:flex-none px-4 py-2 bg-slate-600/50 hover:bg-slate-600 text-slate-300 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2"
                     >
                       <X className="w-4 h-4" />
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              );
+            }
+
+            // Show delete confirmation
+            if (deleteConfirmId === task.id) {
+              return (
+                <div key={task.id} className="p-4 bg-red-500/10 rounded-xl border-2 border-red-500/50">
+                  <div className="text-slate-200 font-medium mb-3">Delete this task?</div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => confirmDelete(task.id)}
+                      className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm font-medium transition-all"
+                    >
+                      Yes, Delete
+                    </button>
+                    <button
+                      onClick={cancelDelete}
+                      className="flex-1 px-4 py-2 bg-slate-600/50 hover:bg-slate-600 text-slate-300 rounded-lg text-sm font-medium transition-all"
+                    >
                       Cancel
                     </button>
                   </div>
@@ -221,7 +296,7 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => onDelete(task.id)}
+                      onClick={() => handleDelete(task.id)}
                       className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/20 rounded-lg transition-all"
                       title="Delete task"
                     >
