@@ -27,6 +27,26 @@ function App() {
   const { elapsedTime, isPaused, resetTimer, togglePause } = useTimer(activeTask);
   const { syncData, syncGoals, isSyncing } = useTaskSync(isOnline, deviceId, user);
 
+  // Check for unsynced tasks on mount and when coming online
+  useEffect(() => {
+    if (user && isOnline && supabase) {
+      const userKey = `timeTasks_${user.id}`;
+      const saved = localStorage.getItem(userKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const hasUnsynced = parsed.some(t => !t.synced);
+        if (hasUnsynced) {
+          console.log('Found unsynced tasks, triggering sync...');
+          syncData().then(syncedTasks => {
+            if (syncedTasks) {
+              setTasks(syncedTasks);
+            }
+          });
+        }
+      }
+    }
+  }, [isOnline, user]);
+
   useEffect(() => {
     if (!user) return;
 
@@ -70,21 +90,6 @@ function App() {
     }
   }, [goals, user]);
 
-  useEffect(() => {
-    if (isOnline && supabase && user) {
-      syncData().then(syncedTasks => {
-        if (syncedTasks) {
-          setTasks(syncedTasks);
-        }
-      });
-      syncGoals().then(syncedGoals => {
-        if (syncedGoals) {
-          setGoals(syncedGoals);
-        }
-      });
-    }
-  }, [isOnline, user]);
-
   const startTask = (taskName, category, notes) => {
     const newTask = {
       id: Date.now(),
@@ -107,21 +112,30 @@ function App() {
       ...activeTask,
       endTime: Date.now(),
       duration: elapsedTime,
-      synced: false
+      synced: false // Always mark as unsynced initially
     };
     
+    // Add to tasks immediately
     setTasks(prev => [completedTask, ...prev]);
     setActiveTask(null);
     resetTimer();
 
+    // Try to sync immediately if online, but don't worry if offline
+    // The periodic sync or online reconnection will handle it
     if (isOnline && supabase && user) {
+      console.log('Task stopped, triggering sync...');
+      // Small delay to ensure localStorage is updated
       setTimeout(() => {
         syncData().then(syncedTasks => {
           if (syncedTasks) {
             setTasks(syncedTasks);
+          } else {
+            console.log('Sync failed or offline - task will sync later');
           }
         });
-      }, 1000);
+      }, 500);
+    } else {
+      console.log('Offline - task will sync when connection is restored');
     }
   };
 
@@ -235,6 +249,9 @@ function App() {
     );
   }
 
+  // Calculate unsynced count
+  const unsyncedCount = tasks.filter(t => !t.synced).length + goals.filter(g => !g.synced).length;
+
   if (!user) {
     return <Auth onSignIn={signInWithGoogle} />;
   }
@@ -259,6 +276,7 @@ function App() {
               setView={setView}
               user={user}
               onSignOut={signOut}
+              unsyncedCount={unsyncedCount}
             />
             
             {view === 'tasks' && !activeTask && (

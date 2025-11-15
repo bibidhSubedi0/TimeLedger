@@ -1,8 +1,8 @@
 import React from 'react';
-import { Clock, RefreshCw, BarChart3, Target, List, LogOut, User } from 'lucide-react';
+import { Clock, RefreshCw, BarChart3, Target, List, LogOut, User, CloudOff, AlertCircle } from 'lucide-react';
 import { supabase } from '../config/supabase';
 
-export const Header = ({ isOnline, isSyncing, view, setView, user, onSignOut }) => {
+export const Header = ({ isOnline, isSyncing, view, setView, user, onSignOut, unsyncedCount = 0 }) => {
   return (
     <>
       <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
@@ -43,25 +43,61 @@ export const Header = ({ isOnline, isSyncing, view, setView, user, onSignOut }) 
               </button>
             </div>
           )}
+          
+          {/* Unsynced Items Indicator */}
+          {!isOnline && unsyncedCount > 0 && (
+            <div className="px-3 py-2 bg-amber-500/20 rounded-xl text-xs font-medium flex items-center border border-amber-500/30 gap-2">
+              <AlertCircle className="w-4 h-4 text-amber-400" />
+              <span className="text-amber-300 hidden sm:inline">
+                {unsyncedCount} unsynced
+              </span>
+            </div>
+          )}
+          
+          {/* Syncing Indicator */}
           {isSyncing && (
-            <div className="p-2 bg-purple-500/20 rounded-lg border border-purple-500/30">
+            <div className="p-2 bg-purple-500/20 rounded-lg border border-purple-500/30" title="Syncing...">
               <RefreshCw className="w-4 h-4 text-purple-400 animate-spin" />
             </div>
           )}
+          
+          {/* Online/Offline Status */}
           <div 
             className={`px-3 py-2 rounded-xl text-xs font-medium flex items-center border ${
               isOnline 
                 ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' 
-                : 'bg-slate-700/50 text-slate-400 border-slate-600/50'
+                : 'bg-red-500/20 text-red-400 border-red-500/30'
             }`}
+            title={isOnline ? 'Connected to internet' : 'No internet connection - data will sync when online'}
           >
-            <span className={`inline-block w-2 h-2 rounded-full mr-2 ${isOnline ? 'bg-emerald-400' : 'bg-slate-500'}`}></span>
-            <span className="hidden sm:inline">
-              {isOnline ? 'Online' : 'Offline'}
-            </span>
+            {isOnline ? (
+              <>
+                <span className="inline-block w-2 h-2 rounded-full mr-2 bg-emerald-400"></span>
+                <span className="hidden sm:inline">Online</span>
+              </>
+            ) : (
+              <>
+                <CloudOff className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Offline</span>
+              </>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Offline Warning */}
+      {!isOnline && (
+        <div className="bg-amber-500/20 border border-amber-500/30 rounded-xl p-4 mb-6 text-sm text-amber-200 flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+          <div>
+            <div className="font-medium mb-1">You're offline</div>
+            <div className="text-amber-300/80">
+              Your tasks are being saved locally and will automatically sync when you're back online.
+              {unsyncedCount > 0 && ` You have ${unsyncedCount} task${unsyncedCount > 1 ? 's' : ''} waiting to sync.`}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-3 gap-3 mb-8">
         <button

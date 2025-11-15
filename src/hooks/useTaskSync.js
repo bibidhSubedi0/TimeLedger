@@ -4,6 +4,7 @@ import { supabase } from '../config/supabase';
 export const useTaskSync = (isOnline, deviceId, user) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const syncTimeoutRef = useRef(null);
+  const syncAttemptedRef = useRef(false);
 
   const syncData = useCallback(async () => {
     if (!supabase || !isOnline || isSyncing || !user) return null;
@@ -15,7 +16,11 @@ export const useTaskSync = (isOnline, deviceId, user) => {
       
       // Upload local tasks that aren't synced yet
       const unsynced = currentLocal.filter(t => !t.synced);
+      
       if (unsynced.length > 0) {
+        console.log(`Syncing ${unsynced.length} unsynced tasks...`);
+        
+        // Try to upsert all unsynced tasks
         const { error: uploadError } = await supabase
           .from('tasks')
           .upsert(unsynced.map(t => ({
@@ -29,9 +34,14 @@ export const useTaskSync = (isOnline, deviceId, user) => {
             device_id: deviceId,
             user_id: user.id,
             synced: true
-          })));
+          })), { onConflict: 'id' });
         
-        if (!uploadError) {
+        if (uploadError) {
+          console.error('Error uploading tasks:', uploadError);
+          // Don't mark as synced if upload failed
+        } else {
+          console.log('Successfully synced tasks');
+          // Mark all as synced only if upload succeeded
           const updated = currentLocal.map(t => 
             unsynced.find(u => u.id === t.id) ? { ...t, synced: true } : t
           );
@@ -58,8 +68,12 @@ export const useTaskSync = (isOnline, deviceId, user) => {
           synced: true
         }));
         
+        // Merge with local unsynced tasks (in case upload failed)
+        const localUnsynced = currentLocal.filter(t => !t.synced);
+        const merged = [...localUnsynced, ...allTasks];
+        
         const uniqueTasks = Array.from(
-          new Map(allTasks.map(t => [t.id, t])).values()
+          new Map(merged.map(t => [t.id, t])).values()
         ).sort((a, b) => b.startTime - a.startTime);
         
         localStorage.setItem(userKey, JSON.stringify(uniqueTasks));
@@ -68,6 +82,7 @@ export const useTaskSync = (isOnline, deviceId, user) => {
       }
     } catch (error) {
       console.error('Sync error:', error);
+      // Don't throw - we'll retry later
     } finally {
       setIsSyncing(false);
     }
@@ -83,7 +98,10 @@ export const useTaskSync = (isOnline, deviceId, user) => {
       
       // Upload local goals that aren't synced yet
       const unsyncedGoals = currentGoals.filter(g => !g.synced);
+      
       if (unsyncedGoals.length > 0) {
+        console.log(`Syncing ${unsyncedGoals.length} unsynced goals...`);
+        
         const { error: uploadError } = await supabase
           .from('goals')
           .upsert(unsyncedGoals.map(g => ({
@@ -97,9 +115,12 @@ export const useTaskSync = (isOnline, deviceId, user) => {
             created_at: g.createdAt,
             completed_at: g.completedAt || null,
             synced: true
-          })));
+          })), { onConflict: 'id' });
         
-        if (!uploadError) {
+        if (uploadError) {
+          console.error('Error uploading goals:', uploadError);
+        } else {
+          console.log('Successfully synced goals');
           const updated = currentGoals.map(g => 
             unsyncedGoals.find(u => u.id === g.id) ? { ...g, synced: true } : g
           );
@@ -126,8 +147,12 @@ export const useTaskSync = (isOnline, deviceId, user) => {
           synced: true
         }));
         
+        // Merge with local unsynced goals
+        const localUnsynced = currentGoals.filter(g => !g.synced);
+        const merged = [...localUnsynced, ...allGoals];
+        
         const uniqueGoals = Array.from(
-          new Map(allGoals.map(g => [g.id, g])).values()
+          new Map(merged.map(g => [g.id, g])).values()
         ).sort((a, b) => b.createdAt - a.createdAt);
         
         localStorage.setItem(goalsKey, JSON.stringify(uniqueGoals));
@@ -140,14 +165,38 @@ export const useTaskSync = (isOnline, deviceId, user) => {
     return null;
   }, [isOnline, deviceId, user]);
 
-  // Periodic sync every 30 seconds
+  // Trigger sync immediately when coming back online
+  useEffect(() => {
+    if (isOnline && supabase && user && !syncAttemptedRef.current) {
+      syncAttemptedRef.current = true;
+      console.log('Device came online - triggering immediate sync...');
+      
+      // Give a small delay to ensure connection is stable
+      setTimeout(() => {
+        syncData().then(syncedTasks => {
+          if (syncedTasks) {
+            console.log('Online sync completed');
+          }
+        });
+        syncGoals().then(syncedGoals => {
+          if (syncedGoals) {
+            console.log('Goals online sync completed');
+          }
+        });
+        syncAttemptedRef.current = false;
+      }, 1000);
+    }
+  }, [isOnline, syncData, syncGoals, user]);
+
+  // Periodic sync every 30 seconds (when online)
   useEffect(() => {
     if (isOnline && supabase && user) {
       syncTimeoutRef.current = setInterval(() => {
         syncData();
         syncGoals();
-      }, 30000);
+      }, 30000); // 30 seconds
     }
+    
     return () => {
       if (syncTimeoutRef.current) {
         clearInterval(syncTimeoutRef.current);
