@@ -1,21 +1,9 @@
 import React, { useState } from 'react';
 import { formatTime } from '../utils/timeUtils';
 import { Trash2, Edit2, Download, Filter, Clock, Check, X } from 'lucide-react';
-import { PenLine } from 'lucide-react';
+import { getAllCategories } from '../utils/categoryUtils';
 
-
-const CATEGORIES = [
-  { id: 'study', name: 'Study', color: '#3b82f6', icon: '📚' },
-  { id: 'work', name: 'Work', color: '#8b5cf6', icon: '💼' },
-  { id: 'gaming', name: 'Gaming', color: '#ec4899', icon: '🎮' },
-  { id: 'exercise', name: 'Exercise', color: '#10b981', icon: '💪' },
-  { id: 'reading', name: 'Reading', color: '#f59e0b', icon: '📖' },
-  { id: 'coding', name: 'Coding', color: '#06b6d4', icon: '💻' },
-  { id: 'creative', name: 'Creative', color: '#f97316', icon: '🎨' },
-  { id: 'other', name: 'Other', color: '#64748b', icon: '📌' },
-];
-
-export const TaskList = ({ tasks, onDelete, onUpdate }) => {
+export const TaskList = ({ tasks, onDelete, onUpdate, customCategories = [] }) => {
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState('');
   const [editNotes, setEditNotes] = useState('');
@@ -23,6 +11,8 @@ export const TaskList = ({ tasks, onDelete, onUpdate }) => {
   const [showFilters, setShowFilters] = useState(false);
   const [showAllTasks, setShowAllTasks] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+
+  const CATEGORIES = getAllCategories(customCategories);
 
   const exportToCSV = () => {
     const headers = ['Task Name', 'Category', 'Start Time', 'Duration', 'Notes'];

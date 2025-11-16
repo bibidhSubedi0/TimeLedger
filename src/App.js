@@ -14,6 +14,8 @@ import { TaskList } from './components/TaskList';
 import { Analytics } from './components/Analytics';
 import { Goals } from './components/Goals';
 import { ManualTaskLogger } from './components/ManualTaskLogger';
+import { CategoryManager } from './components/CategoryManager';
+import { getDefaultCategories } from './utils/categoryUtils';
 import './App.css';
 
 function App() {
@@ -24,6 +26,8 @@ function App() {
   const [view, setView] = useState('tasks');
   const [goals, setGoals] = useState([]);
   const [showManualLogger, setShowManualLogger] = useState(false);
+  const [customCategories, setCustomCategories] = useState([]);
+  const [showCategoryManager, setShowCategoryManager] = useState(false);
   
   const isOnline = useOnlineStatus();
   const { elapsedTime, isPaused, resetTimer, togglePause } = useTimer(activeTask);
@@ -91,6 +95,23 @@ function App() {
       localStorage.setItem(goalsKey, JSON.stringify(goals));
     }
   }, [goals, user]);
+
+  useEffect(() => {
+    if (user) {
+      const categoriesKey = `timeCategories_${user.id}`;
+      const savedCategories = localStorage.getItem(categoriesKey);
+      if (savedCategories) {
+        setCustomCategories(JSON.parse(savedCategories));
+      }
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      const categoriesKey = `timeCategories_${user.id}`;
+      localStorage.setItem(categoriesKey, JSON.stringify(customCategories));
+    }
+  }, [customCategories, user]);
 
   const startTask = (taskName, category, notes) => {
     const newTask = {
@@ -256,6 +277,12 @@ function App() {
     }
   };
 
+  const handleUpdateCategories = (newCategories) => {
+    // Filter out default categories, only store custom ones
+    const customOnly = newCategories.filter(cat => cat.isCustom);
+    setCustomCategories(customOnly);
+  };
+
   // Calculate unsynced count
   const unsyncedCount = tasks.filter(t => !t.synced).length + goals.filter(g => !g.synced).length;
 
@@ -280,6 +307,15 @@ function App() {
         <ManualTaskLogger 
           onAddTask={addManualTask}
           onClose={() => setShowManualLogger(false)}
+          customCategories={customCategories}
+        />
+      )}
+
+      {showCategoryManager && (
+        <CategoryManager 
+          categories={[...getDefaultCategories(), ...customCategories]}
+          onUpdateCategories={handleUpdateCategories}
+          onClose={() => setShowCategoryManager(false)}
         />
       )}
 
@@ -289,6 +325,7 @@ function App() {
         isPaused={isPaused}
         onTogglePause={togglePause}
         onStop={stopTask}
+        customCategories={customCategories}
       />
       
       <div className="min-h-screen bg-[#1a1d29] p-4 md:p-6">
@@ -303,13 +340,15 @@ function App() {
               onSignOut={signOut}
               unsyncedCount={unsyncedCount}
               onOpenManualLogger={() => setShowManualLogger(true)}
+              onOpenCategoryManager={() => setShowCategoryManager(true)}
             />
             
             {view === 'tasks' && !activeTask && (
               <TaskInput 
                 activeTask={activeTask} 
                 onStart={startTask} 
-                onStop={stopTask} 
+                onStop={stopTask}
+                customCategories={customCategories}
               />
             )}
             
@@ -350,12 +389,13 @@ function App() {
                 tasks={tasks} 
                 onDelete={deleteTask}
                 onUpdate={updateTask}
+                customCategories={customCategories}
               />
             </>
           )}
 
           {view === 'analytics' && (
-            <Analytics tasks={tasks} />
+            <Analytics tasks={tasks} customCategories={customCategories} />
           )}
 
           {view === 'goals' && (
@@ -365,6 +405,7 @@ function App() {
               onAddGoal={addGoal}
               onDeleteGoal={deleteGoal}
               onUpdateGoal={updateGoal}
+              customCategories={customCategories}
             />
           )}
         </div>

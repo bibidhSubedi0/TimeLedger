@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { formatTime } from '../utils/timeUtils';
 import { Maximize2, Minimize2, Pause, Play, Square } from 'lucide-react';
+import { getAllCategories } from '../utils/categoryUtils';
 
-const CATEGORIES = [
-  { id: 'study', name: 'Study', color: '#3b82f6', icon: '📚' },
-  { id: 'work', name: 'Work', color: '#8b5cf6', icon: '💼' },
-  { id: 'gaming', name: 'Gaming', color: '#ec4899', icon: '🎮' },
-  { id: 'exercise', name: 'Exercise', color: '#10b981', icon: '💪' },
-  { id: 'reading', name: 'Reading', color: '#f59e0b', icon: '📖' },
-  { id: 'coding', name: 'Coding', color: '#06b6d4', icon: '💻' },
-  { id: 'creative', name: 'Creative', color: '#f97316', icon: '🎨' },
-  { id: 'other', name: 'Other', color: '#64748b', icon: '📌' },
-];
-
-export const ActiveTimer = ({ activeTask, elapsedTime, isPaused, onTogglePause, onStop }) => {
+export const ActiveTimer = ({ activeTask, elapsedTime, isPaused, onTogglePause, onStop, customCategories = [] }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [milliseconds, setMilliseconds] = useState(0);
+
+  const CATEGORIES = getAllCategories(customCategories);
 
   useEffect(() => {
     if (!activeTask) {

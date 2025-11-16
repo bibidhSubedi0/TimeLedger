@@ -1,29 +1,21 @@
 import React, { useState } from 'react';
 import { Play, Square, Tag, FileText, ChevronDown, ChevronUp, Zap } from 'lucide-react';
-
-const CATEGORIES = [
-  { id: 'study', name: 'Study', color: '#3b82f6', icon: '📚' },
-  { id: 'work', name: 'Work', color: '#8b5cf6', icon: '💼' },
-  { id: 'gaming', name: 'Gaming', color: '#ec4899', icon: '🎮' },
-  { id: 'exercise', name: 'Exercise', color: '#10b981', icon: '💪' },
-  { id: 'reading', name: 'Reading', color: '#f59e0b', icon: '📖' },
-  { id: 'coding', name: 'Coding', color: '#06b6d4', icon: '💻' },
-  { id: 'creative', name: 'Creative', color: '#f97316', icon: '🎨' },
-  { id: 'other', name: 'Other', color: '#64748b', icon: '📌' },
-];
+import { getAllCategories } from '../utils/categoryUtils';
 
 const QUICK_TEMPLATES = [
   { name: 'Deep Work', category: 'work', icon: '🎯' },
   { name: 'Study Session', category: 'study', icon: '📖' },
   { name: 'Exercise', category: 'exercise', icon: '🏃' },
-  { name: 'Reading', category: 'reading', icon: '📚' },
+  { name: 'Gaming Break', category: 'gaming', icon: '🎮' },
 ];
 
-export const TaskInput = ({ activeTask, onStart, onStop }) => {
+export const TaskInput = ({ activeTask, onStart, onStop, customCategories = [] }) => {
   const [taskName, setTaskName] = useState('');
   const [category, setCategory] = useState('study');
   const [notes, setNotes] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const CATEGORIES = getAllCategories(customCategories);
 
   const handleStart = () => {
     if (!taskName.trim()) return;
@@ -136,7 +128,7 @@ export const TaskInput = ({ activeTask, onStart, onStop }) => {
 
               <div>
                 <div className="flex items-center gap-2 mb-3 text-sm font-medium text-slate-300">
-                  <FileText className="w-4 h-4" />
+                  <FileText className="w-4 h4" />
                   Notes (optional)
                 </div>
                 <textarea

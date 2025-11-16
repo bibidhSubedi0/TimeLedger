@@ -1,18 +1,8 @@
 import React, { useState } from 'react';
 import { Plus, Clock, Calendar, Tag, FileText, Save, X } from 'lucide-react';
+import { getAllCategories } from '../utils/categoryUtils';
 
-const CATEGORIES = [
-  { id: 'study', name: 'Study', color: '#3b82f6', icon: '📚' },
-  { id: 'work', name: 'Work', color: '#8b5cf6', icon: '💼' },
-  { id: 'gaming', name: 'Gaming', color: '#ec4899', icon: '🎮' },
-  { id: 'exercise', name: 'Exercise', color: '#10b981', icon: '💪' },
-  { id: 'reading', name: 'Reading', color: '#f59e0b', icon: '📖' },
-  { id: 'coding', name: 'Coding', color: '#06b6d4', icon: '💻' },
-  { id: 'creative', name: 'Creative', color: '#f97316', icon: '🎨' },
-  { id: 'other', name: 'Other', color: '#64748b', icon: '📌' },
-];
-
-export const ManualTaskLogger = ({ onAddTask, onClose }) => {
+export const ManualTaskLogger = ({ onAddTask, onClose, customCategories = [] }) => {
   const [taskName, setTaskName] = useState('');
   const [category, setCategory] = useState('study');
   const [notes, setNotes] = useState('');
@@ -26,6 +16,8 @@ export const ManualTaskLogger = ({ onAddTask, onClose }) => {
   const [usePreset, setUsePreset] = useState(false);
   const [durationHours, setDurationHours] = useState(1);
   const [durationMinutes, setDurationMinutes] = useState(0);
+
+  const CATEGORIES = getAllCategories(customCategories);
 
   const handlePresetChange = (hours, minutes) => {
     setDurationHours(hours);

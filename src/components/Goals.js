@@ -1,24 +1,16 @@
 import React, { useState } from 'react';
 import { formatTime } from '../utils/timeUtils';
 import { Target, Plus, Trash2, Award, TrendingUp } from 'lucide-react';
+import { getAllCategories } from '../utils/categoryUtils';
 
-const CATEGORIES = [
-  { id: 'study', name: 'Study', color: '#3b82f6', icon: '📚' },
-  { id: 'work', name: 'Work', color: '#8b5cf6', icon: '💼' },
-  { id: 'gaming', name: 'Gaming', color: '#ec4899', icon: '🎮' },
-  { id: 'exercise', name: 'Exercise', color: '#10b981', icon: '💪' },
-  { id: 'reading', name: 'Reading', color: '#f59e0b', icon: '📖' },
-  { id: 'coding', name: 'Coding', color: '#06b6d4', icon: '💻' },
-  { id: 'creative', name: 'Creative', color: '#f97316', icon: '🎨' },
-  { id: 'other', name: 'Other', color: '#64748b', icon: '📌' },
-];
-
-export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal }) => {
+export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal, customCategories = [] }) => {
   const [showForm, setShowForm] = useState(false);
   const [goalName, setGoalName] = useState('');
   const [goalType, setGoalType] = useState('daily');
   const [targetHours, setTargetHours] = useState(4);
   const [category, setCategory] = useState('all');
+
+  const CATEGORIES = getAllCategories(customCategories);
 
   const handleAddGoal = () => {
     if (!goalName.trim() || targetHours <= 0) return;
@@ -74,7 +66,7 @@ export const Goals = ({ goals, tasks, onAddGoal, onDeleteGoal, onUpdateGoal }) =
 
   const getCategoryInfo = (categoryId) => {
     if (categoryId === 'all') return { name: 'All Categories', color: '#8b5cf6', icon: '🎯' };
-    return CATEGORIES.find(c => c.id === categoryId) || CATEGORIES[CATEGORIES.length - 1];
+    return CATEGORIES.find(c => c.id ===categoryId) || CATEGORIES[CATEGORIES.length - 1];
   };
 
   const activeGoals = goals.filter(g => !g.completedAt);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, RefreshCw, BarChart3, Target, List, LogOut, User, CloudOff, AlertCircle, Plus } from 'lucide-react';
+import { Clock, RefreshCw, BarChart3, Target, List, LogOut, User, CloudOff, AlertCircle, Plus, Tag } from 'lucide-react';
 import { supabase } from '../config/supabase';
 
 export const Header = ({ 
@@ -10,7 +10,8 @@ export const Header = ({
   user, 
   onSignOut, 
   unsyncedCount = 0,
-  onOpenManualLogger
+  onOpenManualLogger,
+  onOpenCategoryManager
 }) => {
   return (
     <>
@@ -144,15 +145,23 @@ export const Header = ({
         </button>
       </div>
 
-      {/* Manual Task Logger Button */}
+      {/* Manual Task Logger & Category Manager Buttons */}
       {view === 'tasks' && (
-        <div className="mb-6">
+        <div className="mb-6 space-y-3">
           <button
             onClick={onOpenManualLogger}
             className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 hover:border-purple-500/50 text-slate-300 hover:text-purple-300 rounded-xl font-medium transition-all group"
           >
             <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" />
             <span>Log Past Activity</span>
+          </button>
+          
+          <button
+            onClick={onOpenCategoryManager}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 hover:border-purple-500/50 text-slate-300 hover:text-purple-300 rounded-xl font-medium transition-all group"
+          >
+            <Tag className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+            <span>Manage Categories</span>
           </button>
         </div>
       )}
