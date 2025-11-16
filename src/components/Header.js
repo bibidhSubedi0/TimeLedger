@@ -1,8 +1,17 @@
 import React from 'react';
-import { Clock, RefreshCw, BarChart3, Target, List, LogOut, User, CloudOff, AlertCircle } from 'lucide-react';
+import { Clock, RefreshCw, BarChart3, Target, List, LogOut, User, CloudOff, AlertCircle, Plus } from 'lucide-react';
 import { supabase } from '../config/supabase';
 
-export const Header = ({ isOnline, isSyncing, view, setView, user, onSignOut, unsyncedCount = 0 }) => {
+export const Header = ({ 
+  isOnline, 
+  isSyncing, 
+  view, 
+  setView, 
+  user, 
+  onSignOut, 
+  unsyncedCount = 0,
+  onOpenManualLogger
+}) => {
   return (
     <>
       <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
@@ -134,6 +143,19 @@ export const Header = ({ isOnline, isSyncing, view, setView, user, onSignOut, un
           <span className="hidden sm:inline">Goals</span>
         </button>
       </div>
+
+      {/* Manual Task Logger Button */}
+      {view === 'tasks' && (
+        <div className="mb-6">
+          <button
+            onClick={onOpenManualLogger}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 hover:border-purple-500/50 text-slate-300 hover:text-purple-300 rounded-xl font-medium transition-all group"
+          >
+            <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+            <span>Log Past Activity</span>
+          </button>
+        </div>
+      )}
 
       {!supabase && (
         <div className="bg-amber-500/20 border border-amber-500/30 rounded-xl p-4 mb-6 text-sm text-amber-200">

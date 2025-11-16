@@ -13,6 +13,7 @@ import { StatsGrid } from './components/StatsGrid';
 import { TaskList } from './components/TaskList';
 import { Analytics } from './components/Analytics';
 import { Goals } from './components/Goals';
+import { ManualTaskLogger } from './components/ManualTaskLogger';
 import './App.css';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
   const [deviceId] = useState(() => getDeviceId());
   const [view, setView] = useState('tasks');
   const [goals, setGoals] = useState([]);
+  const [showManualLogger, setShowManualLogger] = useState(false);
   
   const isOnline = useOnlineStatus();
   const { elapsedTime, isPaused, resetTimer, togglePause } = useTimer(activeTask);
@@ -112,7 +114,8 @@ function App() {
       ...activeTask,
       endTime: Date.now(),
       duration: elapsedTime,
-      synced: false // Always mark as unsynced initially
+      synced: false,
+      isManualLog: false
     };
     
     // Add to tasks immediately
@@ -120,11 +123,9 @@ function App() {
     setActiveTask(null);
     resetTimer();
 
-    // Try to sync immediately if online, but don't worry if offline
-    // The periodic sync or online reconnection will handle it
+    // Try to sync to Supabase if online
     if (isOnline && supabase && user) {
       console.log('Task stopped, triggering sync...');
-      // Small delay to ensure localStorage is updated
       setTimeout(() => {
         syncData().then(syncedTasks => {
           if (syncedTasks) {
@@ -136,6 +137,23 @@ function App() {
       }, 500);
     } else {
       console.log('Offline - task will sync when connection is restored');
+    }
+  };
+
+  const addManualTask = (task) => {
+    // Add to tasks immediately
+    setTasks(prev => [task, ...prev]);
+    setShowManualLogger(false);
+
+    // Sync to Supabase if online
+    if (isOnline && supabase && user) {
+      setTimeout(() => {
+        syncData().then(syncedTasks => {
+          if (syncedTasks) {
+            setTasks(syncedTasks);
+          }
+        });
+      }, 500);
     }
   };
 
@@ -238,6 +256,9 @@ function App() {
     }
   };
 
+  // Calculate unsynced count
+  const unsyncedCount = tasks.filter(t => !t.synced).length + goals.filter(g => !g.synced).length;
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#1a1d29] flex items-center justify-center">
@@ -249,15 +270,19 @@ function App() {
     );
   }
 
-  // Calculate unsynced count
-  const unsyncedCount = tasks.filter(t => !t.synced).length + goals.filter(g => !g.synced).length;
-
   if (!user) {
     return <Auth onSignIn={signInWithGoogle} />;
   }
 
   return (
     <>
+      {showManualLogger && (
+        <ManualTaskLogger 
+          onAddTask={addManualTask}
+          onClose={() => setShowManualLogger(false)}
+        />
+      )}
+
       <ActiveTimer 
         activeTask={activeTask} 
         elapsedTime={elapsedTime}
@@ -277,6 +302,7 @@ function App() {
               user={user}
               onSignOut={signOut}
               unsyncedCount={unsyncedCount}
+              onOpenManualLogger={() => setShowManualLogger(true)}
             />
             
             {view === 'tasks' && !activeTask && (

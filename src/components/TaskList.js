@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { formatTime } from '../utils/timeUtils';
 import { Trash2, Edit2, Download, Filter, Clock, Check, X } from 'lucide-react';
+import { PenLine } from 'lucide-react';
+
 
 const CATEGORIES = [
   { id: 'study', name: 'Study', color: '#3b82f6', icon: '📚' },
