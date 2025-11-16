@@ -16,6 +16,7 @@ import { Goals } from './components/Goals';
 import { ManualTaskLogger } from './components/ManualTaskLogger';
 import { CategoryManager } from './components/CategoryManager';
 import { getDefaultCategories } from './utils/categoryUtils';
+import { useCategorySync } from './hooks/useCategorySync';
 import './App.css';
 
 function App() {
@@ -32,6 +33,8 @@ function App() {
   const isOnline = useOnlineStatus();
   const { elapsedTime, isPaused, resetTimer, togglePause } = useTimer(activeTask);
   const { syncData, syncGoals, isSyncing } = useTaskSync(isOnline, deviceId, user);
+  const { syncCategories, isSyncing: isSyncingCategories } = useCategorySync(isOnline, user);
+
 
   // Check for unsynced tasks on mount and when coming online
   useEffect(() => {
@@ -52,6 +55,67 @@ function App() {
       }
     }
   }, [isOnline, user]);
+
+
+  useEffect(() => {
+    if (!user) return;
+
+    const categoriesKey = `timeCategories_${user.id}`;
+    const saved = localStorage.getItem(categoriesKey);
+    if (saved) {
+      setCustomCategories(JSON.parse(saved));
+    }
+
+    // Sync from server if online
+    if (isOnline && supabase) {
+      syncCategories().then(syncedCategories => {
+        if (syncedCategories) {
+          setCustomCategories(syncedCategories);
+        }
+      });
+    }
+  }, [user, isOnline, syncCategories]);
+
+
+  useEffect(() => {
+    if (user && isOnline && supabase) {
+      syncCategories();
+    }
+  }, [customCategories, user, isOnline, syncCategories]);
+
+  useEffect(() => {
+  if (user) {
+    const categoriesKey = `timeCategories_${user.id}`;
+    const savedCategories = localStorage.getItem(categoriesKey);
+    if (savedCategories) {
+      const parsed = JSON.parse(savedCategories);
+      
+      // MIGRATION: Add colors to categories that don't have them
+      const migratedCategories = parsed.map((cat, index) => {
+        if (!cat.color) {
+          // Assign a color from a palette
+          const colors = [
+            '#3b82f6', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', 
+            '#06b6d4', '#f97316', '#ef4444', '#14b8a6', '#a855f7',
+            '#eab308', '#22c55e', '#fb923c', '#c084fc', '#f472b6'
+          ];
+          return {
+            ...cat,
+            color: colors[index % colors.length]
+          };
+        }
+        return cat;
+      });
+      
+      // Save migrated categories back
+      if (JSON.stringify(parsed) !== JSON.stringify(migratedCategories)) {
+        localStorage.setItem(categoriesKey, JSON.stringify(migratedCategories));
+      }
+      
+      setCustomCategories(migratedCategories);
+    }
+  }
+}, [user]);
 
   useEffect(() => {
     if (!user) return;

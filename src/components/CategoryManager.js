@@ -14,6 +14,10 @@ const DEFAULT_COLORS = [
   '#14b8a6', // Teal
   '#a855f7', // Violet
   '#eab308', // Yellow
+  '#22c55e', // Bright Green
+  '#fb923c', // Light Orange
+  '#c084fc', // Light Purple
+  '#f472b6', // Light Pink
 ];
 
 const DEFAULT_ICONS = [
@@ -49,13 +53,15 @@ export const CategoryManager = ({ categories, onUpdateCategories, onClose }) => 
       return;
     }
 
-    const newCategory = {
-      id,
-      name: newName.trim(),
-      icon: newIcon,
-      color: newColor,
-      isCustom: true
-    };
+  const newCategory = {
+    id,
+    name: newName.trim(),
+    icon: newIcon,
+    color: newColor,
+    isCustom: true,
+    createdAt: Date.now(),
+    synced: false  // ADD THIS
+  };
 
     onUpdateCategories([...categories, newCategory]);
     
