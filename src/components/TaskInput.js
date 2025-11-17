@@ -3,10 +3,10 @@ import { Play, Square, Tag, FileText, ChevronDown, ChevronUp, Zap } from 'lucide
 import { getAllCategories } from '../utils/categoryUtils';
 
 const QUICK_TEMPLATES = [
-  { name: 'Deep Work', category: 'work', icon: '🎯' },
-  { name: 'Study Session', category: 'study', icon: '📖' },
+  { name: 'Grind', category: 'extra_study', icon: '🎯' },
+  { name: 'Study Session', category: 'college_work_and_study', icon: '📖' },
   { name: 'Exercise', category: 'exercise', icon: '🏃' },
-  { name: 'Gaming Break', category: 'gaming', icon: '🎮' },
+  { name: 'Project', category: 'projects', icon: '📽️' },
 ];
 
 export const TaskInput = ({ activeTask, onStart, onStop, customCategories = [] }) => {
