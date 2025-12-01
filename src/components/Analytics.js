@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { PieChart, BarChart3, Calendar, TrendingUp, Clock, Award, Target, Zap } from 'lucide-react';
 import { getAllCategories } from '../utils/categoryUtils';
 import { DailyPieChart } from './DailyPieChart';
+import { DailyTimeline } from './DailyTimeline';
 
 const formatTime = (seconds) => {
   const hours = Math.floor(seconds / 3600);
@@ -188,6 +189,7 @@ export const Analytics = ({ tasks, customCategories = [] }) => {
       </div>
 
           <DailyPieChart tasks={filteredTasks} customCategories={customCategories} />
+          <DailyTimeline tasks={filteredTasks} customCategories={customCategories} />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
