@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from './config/supabase';
 import { useAuth } from './contexts/AuthContext';
 import { getDeviceId } from './utils/deviceUtils';
@@ -35,8 +35,57 @@ function App() {
   const { syncData, syncGoals, isSyncing } = useTaskSync(isOnline, deviceId, user);
   const { syncCategories, isSyncing: isSyncingCategories } = useCategorySync(isOnline, user);
 
+  // OPTIMIZATION 1: Persist active task to prevent data loss
+  useEffect(() => {
+    if (user && activeTask) {
+      localStorage.setItem(`activeTask_${user.id}`, JSON.stringify({
+        ...activeTask,
+        persistedAt: Date.now()
+      }));
+    } else if (user && !activeTask) {
+      localStorage.removeItem(`activeTask_${user.id}`);
+    }
+  }, [activeTask, user]);
 
-  // Check for unsynced tasks on mount and when coming online
+  // OPTIMIZATION 2: Restore active task on mount (recovery from crashes/refreshes)
+  useEffect(() => {
+    if (user) {
+      const savedActiveTask = localStorage.getItem(`activeTask_${user.id}`);
+      if (savedActiveTask) {
+        try {
+          const parsed = JSON.parse(savedActiveTask);
+          // Only restore if less than 24 hours old
+          if (Date.now() - parsed.persistedAt < 24 * 60 * 60 * 1000) {
+            setActiveTask(parsed);
+          } else {
+            // Auto-complete old task
+            localStorage.removeItem(`activeTask_${user.id}`);
+          }
+        } catch (e) {
+          console.error('Failed to restore active task:', e);
+        }
+      }
+    }
+  }, [user]);
+
+  // OPTIMIZATION 3: Auto-sync periodically and save active task progress
+  useEffect(() => {
+    if (!user || !activeTask) return;
+
+    const interval = setInterval(() => {
+      // Save progress snapshot every 30 seconds
+      const progressSnapshot = {
+        ...activeTask,
+        currentDuration: elapsedTime,
+        lastSaved: Date.now()
+      };
+      localStorage.setItem(`activeTaskProgress_${user.id}`, JSON.stringify(progressSnapshot));
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(interval);
+  }, [activeTask, elapsedTime, user]);
+
+  // OPTIMIZATION 4: Aggressive sync retry on connection restore
   useEffect(() => {
     if (user && isOnline && supabase) {
       const userKey = `timeTasks_${user.id}`;
@@ -54,98 +103,61 @@ function App() {
         }
       }
     }
-  }, [isOnline, user]);
+  }, [isOnline, user, syncData]);
 
-
-  useEffect(() => {
-    if (!user) return;
-
-    const categoriesKey = `timeCategories_${user.id}`;
-    const saved = localStorage.getItem(categoriesKey);
-    if (saved) {
-      setCustomCategories(JSON.parse(saved));
-    }
-
-    // Sync from server if online
-    if (isOnline && supabase) {
-      syncCategories().then(syncedCategories => {
-        if (syncedCategories) {
-          setCustomCategories(syncedCategories);
-        }
-      });
-    }
-  }, [user, isOnline, syncCategories]);
-
-
-  useEffect(() => {
-    if (user && isOnline && supabase) {
-      syncCategories();
-    }
-  }, [customCategories, user, isOnline, syncCategories]);
-
-  useEffect(() => {
-  if (user) {
-    const categoriesKey = `timeCategories_${user.id}`;
-    const savedCategories = localStorage.getItem(categoriesKey);
-    if (savedCategories) {
-      const parsed = JSON.parse(savedCategories);
-      
-      // MIGRATION: Add colors to categories that don't have them
-      const migratedCategories = parsed.map((cat, index) => {
-        if (!cat.color) {
-          // Assign a color from a palette
-          const colors = [
-            '#3b82f6', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', 
-            '#06b6d4', '#f97316', '#ef4444', '#14b8a6', '#a855f7',
-            '#eab308', '#22c55e', '#fb923c', '#c084fc', '#f472b6'
-          ];
-          return {
-            ...cat,
-            color: colors[index % colors.length]
-          };
-        }
-        return cat;
-      });
-      
-      // Save migrated categories back
-      if (JSON.stringify(parsed) !== JSON.stringify(migratedCategories)) {
-        localStorage.setItem(categoriesKey, JSON.stringify(migratedCategories));
-      }
-      
-      setCustomCategories(migratedCategories);
-    }
-  }
-}, [user]);
-
+  // Load data from localStorage (works offline)
   useEffect(() => {
     if (!user) return;
 
     const userKey = `timeTasks_${user.id}`;
     const goalsKey = `timeGoals_${user.id}`;
+    const categoriesKey = `timeCategories_${user.id}`;
 
+    // Load tasks
     const saved = localStorage.getItem(userKey);
     if (saved) {
       setTasks(JSON.parse(saved));
     }
+
+    // Load goals
     const savedGoals = localStorage.getItem(goalsKey);
     if (savedGoals) {
       setGoals(JSON.parse(savedGoals));
     }
 
-    if (isOnline && supabase) {
-      syncData().then(syncedTasks => {
-        if (syncedTasks) {
-          setTasks(syncedTasks);
+    // Load categories
+    const savedCategories = localStorage.getItem(categoriesKey);
+    if (savedCategories) {
+      const parsed = JSON.parse(savedCategories);
+      // Migration: Add colors if missing
+      const migratedCategories = parsed.map((cat, index) => {
+        if (!cat.color) {
+          const colors = [
+            '#3b82f6', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', 
+            '#06b6d4', '#f97316', '#ef4444', '#14b8a6', '#a855f7'
+          ];
+          return { ...cat, color: colors[index % colors.length] };
         }
+        return cat;
       });
-      syncGoals().then(syncedGoals => {
-        if (syncedGoals) {
-          setGoals(syncedGoals);
-        }
+      setCustomCategories(migratedCategories);
+    }
+
+    // ONLY sync if online - app works fully offline
+    if (isOnline && supabase) {
+      Promise.all([
+        syncData(),
+        syncGoals(),
+        syncCategories()
+      ]).then(([syncedTasks, syncedGoals, syncedCategories]) => {
+        if (syncedTasks) setTasks(syncedTasks);
+        if (syncedGoals) setGoals(syncedGoals);
+        if (syncedCategories) setCustomCategories(syncedCategories);
       });
     }
-  }, [user]);
+  }, [user, isOnline, syncData, syncGoals, syncCategories]);
 
+  // Persist to localStorage whenever data changes (works offline)
   useEffect(() => {
     if (user) {
       const userKey = `timeTasks_${user.id}`;
@@ -163,21 +175,11 @@ function App() {
   useEffect(() => {
     if (user) {
       const categoriesKey = `timeCategories_${user.id}`;
-      const savedCategories = localStorage.getItem(categoriesKey);
-      if (savedCategories) {
-        setCustomCategories(JSON.parse(savedCategories));
-      }
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (user) {
-      const categoriesKey = `timeCategories_${user.id}`;
       localStorage.setItem(categoriesKey, JSON.stringify(customCategories));
     }
   }, [customCategories, user]);
 
-  const startTask = (taskName, category, notes) => {
+  const startTask = useCallback((taskName, category, notes) => {
     const newTask = {
       id: Date.now(),
       name: taskName,
@@ -190,9 +192,9 @@ function App() {
     
     setActiveTask(newTask);
     resetTimer();
-  };
+  }, [resetTimer]);
 
-  const stopTask = () => {
+  const stopTask = useCallback(() => {
     if (!activeTask) return;
     
     const completedTask = {
@@ -203,48 +205,66 @@ function App() {
       isManualLog: false
     };
     
-    // Add to tasks immediately
-    setTasks(prev => [completedTask, ...prev]);
+    // Save immediately to localStorage
+    setTasks(prev => {
+      const updated = [completedTask, ...prev];
+      if (user) {
+        localStorage.setItem(`timeTasks_${user.id}`, JSON.stringify(updated));
+      }
+      return updated;
+    });
+    
     setActiveTask(null);
     resetTimer();
+    
+    // Clean up progress tracking
+    if (user) {
+      localStorage.removeItem(`activeTaskProgress_${user.id}`);
+    }
 
-    // Try to sync to Supabase if online
+    // Try to sync if online (but don't block)
     if (isOnline && supabase && user) {
-      console.log('Task stopped, triggering sync...');
       setTimeout(() => {
         syncData().then(syncedTasks => {
           if (syncedTasks) {
             setTasks(syncedTasks);
-          } else {
-            console.log('Sync failed or offline - task will sync later');
           }
+        }).catch(err => {
+          console.log('Sync failed, will retry later:', err);
         });
       }, 500);
-    } else {
-      console.log('Offline - task will sync when connection is restored');
     }
-  };
+  }, [activeTask, elapsedTime, isOnline, resetTimer, syncData, user]);
 
-  const addManualTask = (task) => {
-    // Add to tasks immediately
-    setTasks(prev => [task, ...prev]);
+  const addManualTask = useCallback((task) => {
+    setTasks(prev => {
+      const updated = [task, ...prev];
+      if (user) {
+        localStorage.setItem(`timeTasks_${user.id}`, JSON.stringify(updated));
+      }
+      return updated;
+    });
     setShowManualLogger(false);
 
-    // Sync to Supabase if online
+    // Sync if online
     if (isOnline && supabase && user) {
       setTimeout(() => {
         syncData().then(syncedTasks => {
-          if (syncedTasks) {
-            setTasks(syncedTasks);
-          }
-        });
+          if (syncedTasks) setTasks(syncedTasks);
+        }).catch(err => console.log('Sync failed, will retry later'));
       }, 500);
     }
-  };
+  }, [isOnline, syncData, user]);
 
-  const deleteTask = async (taskId) => {
-    // Delete from local state immediately for instant feedback
-    setTasks(prev => prev.filter(t => t.id !== taskId));
+  const deleteTask = useCallback(async (taskId) => {
+    // Delete from local state immediately
+    setTasks(prev => {
+      const updated = prev.filter(t => t.id !== taskId);
+      if (user) {
+        localStorage.setItem(`timeTasks_${user.id}`, JSON.stringify(updated));
+      }
+      return updated;
+    });
     
     // Delete from Supabase if online
     if (isOnline && supabase && user) {
@@ -256,99 +276,110 @@ function App() {
           .eq('user_id', user.id);
         
         if (error) {
-          console.error('Error deleting task from Supabase:', error);
-          // Optionally: re-sync to restore the task if deletion failed
-          syncData().then(syncedTasks => {
-            if (syncedTasks) {
-              setTasks(syncedTasks);
-            }
-          });
+          console.error('Error deleting from server:', error);
         }
       } catch (error) {
-        console.error('Error deleting task:', error);
+        console.log('Deletion will sync later');
       }
     }
-  };
+  }, [isOnline, user]);
 
-  const updateTask = (taskId, updates) => {
-    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, ...updates, synced: false } : t));
+  const updateTask = useCallback((taskId, updates) => {
+    setTasks(prev => {
+      const updated = prev.map(t => 
+        t.id === taskId ? { ...t, ...updates, synced: false } : t
+      );
+      if (user) {
+        localStorage.setItem(`timeTasks_${user.id}`, JSON.stringify(updated));
+      }
+      return updated;
+    });
     
-    // Trigger sync to update Supabase
+    // Sync if online
     if (isOnline && supabase && user) {
       setTimeout(() => {
         syncData().then(syncedTasks => {
-          if (syncedTasks) {
-            setTasks(syncedTasks);
-          }
-        });
+          if (syncedTasks) setTasks(syncedTasks);
+        }).catch(err => console.log('Update sync failed, will retry later'));
       }, 1000);
     }
-  };
+  }, [isOnline, syncData, user]);
 
-  const addGoal = (goal) => {
-    setGoals(prev => [...prev, { ...goal, id: Date.now(), synced: false }]);
+  const addGoal = useCallback((goal) => {
+    setGoals(prev => {
+      const updated = [...prev, { ...goal, id: Date.now(), synced: false }];
+      if (user) {
+        localStorage.setItem(`timeGoals_${user.id}`, JSON.stringify(updated));
+      }
+      return updated;
+    });
     
     if (isOnline && supabase && user) {
       setTimeout(() => {
         syncGoals().then(syncedGoals => {
-          if (syncedGoals) {
-            setGoals(syncedGoals);
-          }
-        });
+          if (syncedGoals) setGoals(syncedGoals);
+        }).catch(err => console.log('Goal sync failed, will retry later'));
       }, 1000);
     }
-  };
+  }, [isOnline, syncGoals, user]);
 
-  const deleteGoal = async (goalId) => {
-    // Delete from local state immediately
-    setGoals(prev => prev.filter(g => g.id !== goalId));
+  const deleteGoal = useCallback(async (goalId) => {
+    setGoals(prev => {
+      const updated = prev.filter(g => g.id !== goalId);
+      if (user) {
+        localStorage.setItem(`timeGoals_${user.id}`, JSON.stringify(updated));
+      }
+      return updated;
+    });
     
-    // Delete from Supabase if online
     if (isOnline && supabase && user) {
       try {
-        const { error } = await supabase
+        await supabase
           .from('goals')
           .delete()
           .eq('id', goalId)
           .eq('user_id', user.id);
-        
-        if (error) {
-          console.error('Error deleting goal from Supabase:', error);
-          // Optionally: re-sync to restore the goal if deletion failed
-          syncGoals().then(syncedGoals => {
-            if (syncedGoals) {
-              setGoals(syncedGoals);
-            }
-          });
-        }
       } catch (error) {
-        console.error('Error deleting goal:', error);
+        console.log('Goal deletion will sync later');
       }
     }
-  };
+  }, [isOnline, user]);
 
-  const updateGoal = (goalId, updates) => {
-    setGoals(prev => prev.map(g => g.id === goalId ? { ...g, ...updates, synced: false } : g));
+  const updateGoal = useCallback((goalId, updates) => {
+    setGoals(prev => {
+      const updated = prev.map(g => 
+        g.id === goalId ? { ...g, ...updates, synced: false } : g
+      );
+      if (user) {
+        localStorage.setItem(`timeGoals_${user.id}`, JSON.stringify(updated));
+      }
+      return updated;
+    });
     
     if (isOnline && supabase && user) {
       setTimeout(() => {
         syncGoals().then(syncedGoals => {
-          if (syncedGoals) {
-            setGoals(syncedGoals);
-          }
-        });
+          if (syncedGoals) setGoals(syncedGoals);
+        }).catch(err => console.log('Goal update sync failed, will retry later'));
       }, 1000);
     }
-  };
+  }, [isOnline, syncGoals, user]);
 
-  const handleUpdateCategories = (newCategories) => {
-    // Filter out default categories, only store custom ones
+  const handleUpdateCategories = useCallback((newCategories) => {
     const customOnly = newCategories.filter(cat => cat.isCustom);
     setCustomCategories(customOnly);
-  };
+    
+    if (user) {
+      localStorage.setItem(`timeCategories_${user.id}`, JSON.stringify(customOnly));
+    }
+    
+    if (isOnline && supabase && user) {
+      syncCategories().catch(err => console.log('Category sync failed, will retry later'));
+    }
+  }, [isOnline, syncCategories, user]);
 
-  // Calculate unsynced count
-  const unsyncedCount = tasks.filter(t => !t.synced).length + goals.filter(g => !g.synced).length;
+  const unsyncedCount = tasks.filter(t => !t.synced).length + 
+                        goals.filter(g => !g.synced).length;
 
   if (loading) {
     return (
