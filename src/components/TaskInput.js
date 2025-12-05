@@ -3,8 +3,8 @@ import { Play, Square, Tag, FileText, ChevronDown, ChevronUp, Zap, Clock } from 
 import { getAllCategories } from '../utils/categoryUtils';
 
 const QUICK_TEMPLATES = [
-  { name: 'Grind', category: 'extra_study', icon: '🎯' },
-  { name: 'Study Session', category: 'college_work_and_study', icon: '📖' },
+  { name: 'Extra Study', category: 'extra_study', icon: '🎯' },
+  { name: 'Course Study Session', category: 'college_work_and_study', icon: '📖' },
   { name: 'Exercise', category: 'exercise', icon: '🏃' },
   { name: 'Project', category: 'projects', icon: '📽️' },
 ];
